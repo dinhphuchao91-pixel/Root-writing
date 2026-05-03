@@ -6,353 +6,249 @@
 <title>ROOT Writing Marker</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8f9fa;color:#111827;min-height:100vh;font-size:15px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f6f8;color:#1f2937;font-size:14px;line-height:1.5}
 
-/* ── Header ── */
-header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;color:#111827;cursor:pointer}
-.logo-icon{width:30px;height:30px;background:#16a34a;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
-.nav{display:flex;align-items:center;gap:8px}
-.btn-nav{background:none;border:none;color:#6b7280;font-size:.85rem;cursor:pointer;padding:6px 12px;border-radius:7px;font-family:inherit}
-.btn-nav:hover{background:#f3f4f6;color:#111827}
-.btn-primary{background:#111827;color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-primary:hover{background:#1f2937}
+/* ───── Header ───── */
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;color:#111827}
+.brand-icon{width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+.api-bar{display:flex;align-items:center;gap:8px}
+.api-bar label{font-size:12px;color:#6b7280;font-weight:500}
+.api-bar input{padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;width:280px;background:#f9fafb;transition:.15s}
+.api-bar input:focus{outline:none;border-color:#16a34a;background:#fff;box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.api-bar button{padding:6px 14px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.api-bar button:hover{background:#15803d}
+.api-bar .saved{color:#16a34a;font-size:12px;font-weight:600;display:none}
+.api-bar .saved.show{display:inline}
 
-/* ── Screens ── */
-.screen{display:none}.screen.active{display:block}
+/* ───── Layout ───── */
+.app{display:grid;grid-template-columns:1fr 440px;height:calc(100vh - 56px)}
+@media(max-width:960px){.app{grid-template-columns:1fr;height:auto}}
 
-/* ── HOME ── */
-.home-wrap{max-width:860px;margin:0 auto;padding:32px 16px 60px}
-.home-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.home-title{font-size:1.15rem;font-weight:700}
-.home-sub{font-size:.85rem;color:#6b7280;margin-top:2px}
-.empty-state{text-align:center;padding:64px 20px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
-.empty-icon{font-size:44px;margin-bottom:14px}
-.empty-state h3{font-size:1rem;font-weight:600;color:#374151;margin-bottom:6px}
-.empty-state p{font-size:.875rem;color:#9ca3af;margin-bottom:20px}
-.history-list{display:flex;flex-direction:column;gap:8px}
-.history-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s}
-.history-card:hover{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.08)}
-.h-name{font-weight:600;font-size:.9rem}
-.h-meta{font-size:.78rem;color:#9ca3af;margin-top:3px}
-.h-right{display:flex;align-items:center;gap:8px}
-.chip{padding:3px 9px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap}
-.chip-week{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
-.chip-err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.chip-ok{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
-
-/* ── MARK SCREEN: 2-column ── */
-.mark-layout{display:grid;grid-template-columns:1fr 420px;height:calc(100vh - 54px)}
-@media(max-width:860px){.mark-layout{grid-template-columns:1fr;height:auto}}
-
-/* ── Left panel ── */
-.left-panel{padding:24px;border-right:1px solid #e5e7eb;overflow-y:auto;height:100%}
-.back-btn{display:inline-flex;align-items:center;gap:5px;color:#6b7280;font-size:.82rem;background:none;border:none;cursor:pointer;margin-bottom:18px;padding:0;font-family:inherit}
-.back-btn:hover{color:#111827}
-
-/* Input form */
-.section-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin-bottom:14px}
-.section-card h3{font-size:.88rem;font-weight:700;color:#374151;margin-bottom:14px}
-.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.field:last-child{margin-bottom:0}
-.field label{font-size:.78rem;font-weight:600;color:#374151}
-input[type=text],select,textarea{width:100%;padding:8px 11px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.875rem;font-family:inherit;transition:border-color .15s;background:#fff}
-input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:#16a34a}
-select{cursor:pointer}
-textarea{resize:vertical;min-height:150px;line-height:1.65}
-.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.prompt-box{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:7px;padding:10px 12px;font-size:.82rem;color:#374151;line-height:1.6;min-height:44px}
-.prompt-box.empty{color:#9ca3af;font-style:italic}
-.word-count{font-size:.75rem;text-align:right;margin-top:3px}
-.word-count.ok{color:#15803d}.word-count.low{color:#dc2626}
-.btn-grade{width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
-.btn-grade:hover:not(:disabled){background:#1f2937}
-.btn-grade:disabled{opacity:.45;cursor:not-allowed}
-.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+/* ───── Left panel ───── */
+.left{padding:24px 28px;overflow-y:auto;border-right:1px solid #e5e7eb;background:#fff}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.panel h2{font-size:14px;font-weight:700;color:#111827;margin-bottom:14px;letter-spacing:-.01em}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:600;color:#374151}
+.field input,.field select,.field textarea{padding:9px 12px;border:1px solid #d1d5db;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;transition:.15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.field select{cursor:pointer}
+.field textarea{resize:vertical;min-height:170px;line-height:1.65}
+.prompt-display{background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px;padding:11px 13px;font-size:13px;color:#374151;line-height:1.6;min-height:46px}
+.prompt-display.empty{color:#9ca3af;font-style:italic}
+.word-count{font-size:12px;text-align:right;margin-top:4px;font-weight:500}
+.word-count.ok{color:#16a34a}
+.word-count.low{color:#dc2626}
+.btn-primary{width:100%;padding:11px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:6px;transition:.15s}
+.btn-primary:hover:not(:disabled){background:#1f2937}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err-banner{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 13px;border-radius:7px;font-size:.85rem;margin-top:10px}
+.error-banner{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 13px;border-radius:7px;font-size:13px;margin-top:10px;white-space:pre-wrap}
 
-/* Essay result */
-.essay-result{display:none}
-.result-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.result-title{font-size:1rem;font-weight:700}
-.meta-chip{padding:3px 10px;border-radius:6px;font-size:.75rem;font-weight:600;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
-.meta-chip.done{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
-.reset-btn{font-size:.75rem;color:#6b7280;background:none;border:1px solid #e5e7eb;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
-.reset-btn:hover{background:#f3f4f6}
+/* ───── Result view ───── */
+.result-view{display:none}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.result-name{font-size:18px;font-weight:700;color:#111827}
+.chip{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
+.chip.green{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.chip.blue{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.btn-reset{margin-left:auto;font-size:12px;color:#6b7280;background:#fff;border:1px solid #d1d5db;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:500}
+.btn-reset:hover{background:#f9fafb;border-color:#9ca3af}
+.legend{display:flex;gap:18px;margin-bottom:18px;padding:12px 16px;background:#fafbfc;border-radius:8px;border:1px solid #f3f4f6;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:#6b7280;font-weight:500}
+.legend-chip{padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.legend-gr{background:#fef08a;color:#854d0e}
+.legend-lr{background:#86efac;color:#14532d}
+.legend-approved{color:#16a34a;font-weight:700}
 
-/* Legend */
-.legend{display:flex;gap:16px;margin-bottom:14px;padding:9px 14px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#6b7280}
-.ld-gr{background:#fef08a;color:#78350f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
-.ld-voc{background:#86efac;color:#14532d;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
-.ld-check{color:#15803d;font-size:.72rem;font-weight:700}
+/* ───── Essay rendered ───── */
+.essay-view{font-size:15px;line-height:2.1;color:#111827;white-space:pre-wrap;padding:8px 4px;font-family:Georgia,"Times New Roman",serif}
 
-/* ── ESSAY RENDERED — CRM style ── */
-.essay-rendered{line-height:2.2;font-size:.93rem;color:#1f2937;white-space:pre-wrap;padding:4px 0}
+/* Grammar = yellow */
+.essay-view span.err-grammar{background:#fef08a;border-radius:3px;padding:1px 4px;cursor:pointer;transition:all .12s;display:inline}
+.essay-view span.err-grammar:hover{background:#fde047;outline:1.5px solid #ca8a04;outline-offset:1px}
+.essay-view span.err-grammar.is-active{background:#facc15;outline:2.5px solid #2563eb;outline-offset:2px}
+.essay-view span.err-grammar > s{color:#92400e;text-decoration:line-through;text-decoration-color:#b45309;text-decoration-thickness:1.5px}
+.essay-view span.err-grammar > mark{background:transparent;color:#166534;font-weight:700}
 
-/* Grammar → Yellow highlight */
-.essay-rendered span.grammar{
-  background:#fef08a;
-  border-radius:3px;
-  padding:1px 3px;
-  cursor:pointer;
-  position:relative;
-  transition:all .12s;
-}
-.essay-rendered span.grammar:hover{
-  outline:2px solid #ca8a04;
-  outline-offset:1px;
-}
-.essay-rendered span.grammar.active-span{
-  outline:2.5px solid #2563eb !important;
-  outline-offset:2px;
-  background:#fde047;
-}
-.essay-rendered span.grammar s{
-  color:#92400e;
-  text-decoration:line-through;
-  text-decoration-color:#b45309;
-  text-decoration-thickness:1.5px;
-}
-.essay-rendered span.grammar mark{
-  background:none;
-  color:#166534;
-  font-weight:700;
-}
+/* Vocabulary = green */
+.essay-view span.err-vocab{background:#86efac;border-radius:3px;padding:1px 4px;cursor:pointer;transition:all .12s;display:inline}
+.essay-view span.err-vocab:hover{background:#4ade80;outline:1.5px solid #16a34a;outline-offset:1px}
+.essay-view span.err-vocab.is-active{background:#22c55e;outline:2.5px solid #2563eb;outline-offset:2px}
+.essay-view span.err-vocab > s{color:#166534;text-decoration:line-through;text-decoration-color:#15803d;text-decoration-thickness:1.5px}
+.essay-view span.err-vocab > mark{background:transparent;color:#14532d;font-weight:700}
 
-/* Vocabulary → Green highlight */
-.essay-rendered span.vocabulary{
-  background:#86efac;
-  border-radius:3px;
-  padding:1px 3px;
-  cursor:pointer;
-  position:relative;
-  transition:all .12s;
-}
-.essay-rendered span.vocabulary:hover{
-  outline:2px solid #16a34a;
-  outline-offset:1px;
-}
-.essay-rendered span.vocabulary.active-span{
-  outline:2.5px solid #2563eb !important;
-  outline-offset:2px;
-  background:#4ade80;
-}
-.essay-rendered span.vocabulary s{
-  color:#166534;
-  text-decoration:line-through;
-  text-decoration-color:#15803d;
-  text-decoration-thickness:1.5px;
-}
-.essay-rendered span.vocabulary mark{
-  background:none;
-  color:#14532d;
-  font-weight:700;
-}
+.essay-view s:empty,.essay-view mark:empty{display:none}
+.essay-view span.is-approved::after{content:'✓';font-size:9px;color:#15803d;vertical-align:super;margin-left:2px;font-weight:700}
+.essay-view span.is-deleted{opacity:.3;cursor:default!important;text-decoration:none}
+.essay-view span.is-deleted::before{content:'';position:absolute}
 
-/* Empty s/mark hidden */
-.essay-rendered s:empty,.essay-rendered mark:empty{display:none}
+/* ───── Right panel ───── */
+.right{background:#fafbfc;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
+.right-head{padding:14px 18px;border-bottom:1px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.right-title{font-size:14px;font-weight:700;color:#111827}
+.stat-group{display:flex;gap:6px}
+.stat{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.stat-red{background:#fef2f2;color:#dc2626}
+.stat-green{background:#f0fdf4;color:#15803d}
+.cards-area{flex:1;overflow-y:auto;padding:14px}
+.cards-empty{text-align:center;color:#9ca3af;font-size:13px;padding:60px 20px;line-height:1.8}
 
-/* Approved indicator on span */
-.essay-rendered span.approved::after{
-  content:'✓';
-  font-size:7px;
-  color:#15803d;
-  vertical-align:super;
-  margin-left:1px;
-  font-weight:700;
-}
-/* Deleted span: faded */
-.essay-rendered span.span-deleted{
-  opacity:.35;
-  cursor:default !important;
-}
+/* ───── Comment Card ───── */
+.cmt{background:#fff;border:1.5px solid #e5e7eb;border-radius:10px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:.15s}
+.cmt:hover{border-color:#9ca3af;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.cmt.is-active{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.cmt.is-approved{border-color:#16a34a;background:#f0fdf4}
+.cmt.is-editing{border-color:#2563eb;background:#eff6ff}
 
-/* ── Right panel ── */
-.right-panel{background:#fff;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
-.right-header{padding:13px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
-.right-title{font-size:.88rem;font-weight:700}
-.right-stats{display:flex;gap:6px}
-.stat-chip{padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
-.sc-red{background:#fef2f2;color:#dc2626}
-.sc-green{background:#f0fdf4;color:#15803d}
+.cmt-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #f3f4f6;flex-wrap:wrap}
+.cmt-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;flex-shrink:0}
+.cmt-badge.gr{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+.cmt-badge.lr{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.cmt-correction{font-size:13px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex:1;min-width:0;font-family:Georgia,serif}
+.cmt-correction s{color:#92400e;text-decoration:line-through;background:#fef08a;padding:1px 4px;border-radius:3px;font-size:12.5px}
+.cmt-correction.lr s{color:#166534;background:#86efac}
+.cmt-correction mark{background:transparent;color:#166534;font-weight:700;font-size:13px}
+.cmt-correction.lr mark{color:#14532d}
+.cmt-arrow{color:#9ca3af;font-weight:700;font-size:11px}
+.cmt-num{margin-left:auto;font-size:11px;color:#9ca3af;font-weight:600;flex-shrink:0}
+.cmt-checkmark{color:#16a34a;font-weight:700;font-size:14px;flex-shrink:0}
 
-/* Comments list */
-.comments-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-.right-empty{padding:48px 20px;text-align:center;color:#9ca3af;font-size:.85rem;line-height:1.8}
+.cmt-body{padding:12px 14px}
+.cmt-text{font-size:13px;color:#374151;line-height:1.65}
+.cmt-text b{color:#1d4ed8;font-weight:700}
+.cmt-text-empty{color:#9ca3af;font-style:italic}
+.cmt-textarea{width:100%;padding:9px 11px;border:1.5px solid #93c5fd;border-radius:6px;font-size:13px;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;background:#fff;color:#1f2937}
+.cmt-textarea:focus{outline:none;border-color:#2563eb}
 
-/* ── Comment card ── */
-.comment-card{border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;transition:border-color .15s,box-shadow .15s;cursor:pointer}
-.comment-card:hover{border-color:#9ca3af}
-.comment-card.active-card{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.comment-card.approved-card{border-color:#16a34a;background:#f0fdf4}
-.comment-card.editing-card{border-color:#2563eb;background:#eff6ff}
-.comment-card.deleted-card{display:none}
-
-.card-header{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid #f3f4f6;flex-wrap:wrap;background:rgba(0,0,0,.015)}
-.card-num{margin-left:auto;font-size:.7rem;color:#9ca3af;font-weight:600;flex-shrink:0}
-.card-correction{font-size:.79rem;color:#374151;display:flex;align-items:center;gap:3px;flex-wrap:wrap;flex:1}
-.card-correction s{color:#92400e;text-decoration:line-through;background:#fef08a;padding:0 2px;border-radius:2px}
-.card-correction.voc s{color:#166534;background:#86efac}
-.card-correction mark{background:none;color:#166534;font-weight:700}
-.card-correction.voc mark{color:#14532d}
-.approved-icon{color:#16a34a;font-weight:700;font-size:.85rem;flex-shrink:0}
-
-.card-body{padding:10px 12px}
-.card-text{font-size:.8rem;color:#374151;line-height:1.7}
-.card-text b{color:#1d4ed8}
-.card-textarea{width:100%;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.8rem;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;transition:border-color .15s;background:#fff}
-.card-textarea:focus{outline:none;border-color:#2563eb}
-
-.card-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid #f3f4f6;background:rgba(0,0,0,.01);align-items:center}
-.btn-approve{padding:4px 13px;background:#16a34a;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
+.cmt-actions{display:flex;gap:6px;padding:9px 14px;border-top:1px solid #f3f4f6;background:#fafbfc;align-items:center}
+.btn-sm{padding:5px 12px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;border:none;transition:.12s}
+.btn-approve{background:#16a34a;color:#fff}
 .btn-approve:hover{background:#15803d}
-.btn-edit-c{padding:4px 11px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
-.btn-edit-c:hover{border-color:#9ca3af;color:#374151}
-.btn-del-c{padding:4px 9px;background:none;color:#ef4444;border:1px solid #fecaca;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit;margin-left:auto}
-.btn-del-c:hover{background:#fef2f2}
-.btn-save-c{padding:4px 13px;background:#2563eb;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-save-c:hover{background:#1d4ed8}
-.btn-cancel-c{padding:4px 10px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
-.btn-cancel-c:hover{border-color:#9ca3af}
+.btn-edit{background:#fff;color:#374151;border:1px solid #d1d5db;font-weight:500}
+.btn-edit:hover{background:#f9fafb;border-color:#9ca3af}
+.btn-save{background:#2563eb;color:#fff}
+.btn-save:hover{background:#1d4ed8}
+.btn-cancel{background:#fff;color:#6b7280;border:1px solid #d1d5db;font-weight:500}
+.btn-cancel:hover{background:#f9fafb}
+.btn-delete{background:transparent;color:#ef4444;border:1px solid #fecaca;margin-left:auto;padding:5px 9px;font-weight:500}
+.btn-delete:hover{background:#fef2f2}
 
-/* Badges */
-.badge-gr{background:#fef9c3;color:#854d0e;border:1px solid #fde047;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
-.badge-voc{background:#dcfce7;color:#166534;border:1px solid #86efac;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
-
-/* Footer */
-.right-footer{padding:10px 14px;border-top:1px solid #e5e7eb;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
-.footer-row{display:flex;gap:8px}
-.btn-approve-all{flex:1;padding:8px;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+/* ───── Right footer ───── */
+.right-foot{padding:12px 14px;border-top:1px solid #e5e7eb;background:#fff;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.btn-approve-all{padding:9px;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-approve-all:hover:not(:disabled){background:#dcfce7}
-.btn-approve-all:disabled{opacity:.4;cursor:not-allowed}
-.btn-copy-all{width:100%;padding:9px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-copy-all:disabled{opacity:.4;cursor:not-allowed}
-.btn-copy-all:hover:not(:disabled){background:#047857}
+.btn-approve-all:disabled{opacity:.5;cursor:not-allowed}
+.btn-copy-all{padding:10px;background:#16a34a;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-copy-all:hover:not(:disabled){background:#15803d}
+.btn-copy-all:disabled{opacity:.5;cursor:not-allowed;background:#9ca3af}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo" onclick="showHome()">
-    <div class="logo-icon">✏️</div>
+  <div class="brand">
+    <div class="brand-icon">✏️</div>
     ROOT Writing Marker
   </div>
-  <div class="nav">
-    <button class="btn-nav" onclick="showHome()">Trang chủ</button>
-    <button class="btn-primary" onclick="showMark()">+ Chấm bài mới</button>
+  <div class="api-bar">
+    <label>API Key:</label>
+    <input type="password" id="api-key" placeholder="sk-ant-api03-..."/>
+    <button onclick="saveKey()">Lưu</button>
+    <span class="saved" id="key-saved">✓ Đã lưu</span>
   </div>
 </header>
 
-<!-- HOME -->
-<div id="screen-home" class="screen active">
-  <div class="home-wrap">
-    <div class="home-header">
-      <div>
-        <div class="home-title">Danh sách bài đã chấm</div>
-        <div class="home-sub" id="home-sub">0 bài</div>
-      </div>
-      <button class="btn-primary" onclick="showMark()">+ Chấm bài mới</button>
-    </div>
-    <div id="history-container"></div>
-  </div>
-</div>
+<div class="app">
 
-<!-- MARK -->
-<div id="screen-mark" class="screen">
-  <div class="mark-layout">
-
-    <!-- LEFT -->
-    <div class="left-panel">
-      <button class="back-btn" onclick="showHome()">← Quay lại danh sách</button>
-
-      <!-- INPUT -->
-      <div id="input-section">
-        <div class="section-card">
-          <h3>Thông tin bài chấm</h3>
-          <div class="form-2col">
-            <div class="field">
-              <label>Tên học sinh</label>
-              <input type="text" id="student-name" placeholder="Nhập tên..."/>
-            </div>
-            <div class="field">
-              <label>Tuần học</label>
-              <select id="week" onchange="updatePrompt()">
-                <option value="">-- Chọn tuần --</option>
-                <option value="1">Tuần 1 — Verb patterns</option>
-                <option value="2">Tuần 2 — Collocations</option>
-                <option value="3">Tuần 3 — Thì động từ</option>
-                <option value="4">Tuần 4 — Adj vs Adv</option>
-                <option value="5">Tuần 5 — Prep phrase</option>
-                <option value="6">Tuần 6 — Adj clause (xác định)</option>
-                <option value="7">Tuần 7 — Adj clause (không xác định)</option>
-                <option value="8">Tuần 8 — Bị động</option>
-                <option value="9">Tuần 9 — Tổng hợp</option>
-              </select>
-            </div>
+  <!-- LEFT -->
+  <div class="left">
+    <!-- INPUT FORM -->
+    <div id="input-view">
+      <div class="panel">
+        <h2>Thông tin bài chấm</h2>
+        <div class="row-2">
+          <div class="field">
+            <label>Tên học sinh</label>
+            <input type="text" id="student-name" placeholder="Nhập tên..."/>
           </div>
           <div class="field">
-            <label>Đề bài</label>
-            <div class="prompt-box empty" id="prompt-box">Chọn tuần để xem đề bài...</div>
+            <label>Tuần học</label>
+            <select id="week" onchange="updatePromptDisplay()">
+              <option value="">-- Chọn tuần --</option>
+              <option value="1">Tuần 1 — Verb patterns</option>
+              <option value="2">Tuần 2 — Collocations</option>
+              <option value="3">Tuần 3 — Thì động từ</option>
+              <option value="4">Tuần 4 — Adj vs Adv</option>
+              <option value="5">Tuần 5 — Prep phrase</option>
+              <option value="6">Tuần 6 — Adj clause (xác định)</option>
+              <option value="7">Tuần 7 — Adj clause (không xác định)</option>
+              <option value="8">Tuần 8 — Bị động</option>
+              <option value="9">Tuần 9 — Tổng hợp</option>
+            </select>
           </div>
         </div>
-        <div class="section-card">
-          <h3>Bài làm của học sinh</h3>
-          <div class="field">
-            <textarea id="essay" placeholder="Paste bài viết vào đây..." oninput="updateWordCount()"></textarea>
-            <div class="word-count low" id="word-count">0 từ</div>
-          </div>
-          <button class="btn-grade" id="btn-grade" onclick="gradeEssay()" disabled>Chấm bài</button>
-          <div id="err-banner" class="err-banner" style="display:none"></div>
+        <div class="field" style="margin-top:12px">
+          <label>Đề bài</label>
+          <div class="prompt-display empty" id="prompt-display">Chọn tuần để xem đề bài...</div>
         </div>
       </div>
 
-      <!-- RESULT -->
-      <div id="essay-result" class="essay-result">
-        <div class="result-meta">
-          <span class="result-title" id="result-name"></span>
-          <span class="meta-chip done">Đã chấm bài</span>
-          <span class="meta-chip" id="result-week-chip">Tuần ?</span>
-          <button class="reset-btn" onclick="resetForm()">↺ Chấm bài khác</button>
+      <div class="panel">
+        <h2>Bài làm của học sinh</h2>
+        <div class="field">
+          <textarea id="essay" placeholder="Paste bài viết của học sinh vào đây..." oninput="onEssayInput()"></textarea>
+          <div class="word-count low" id="word-count">0 từ</div>
         </div>
-
-        <div class="legend">
-          <div class="legend-item"><span class="ld-gr">GR</span> Ngữ pháp</div>
-          <div class="legend-item"><span class="ld-voc">LR</span> Từ vựng</div>
-          <div class="legend-item"><span class="ld-check">✓</span> Đã duyệt</div>
-        </div>
-
-        <div class="essay-rendered" id="essay-rendered"></div>
+        <button class="btn-primary" id="btn-grade" onclick="gradeEssay()" disabled>Chấm bài</button>
+        <div id="error-banner" class="error-banner" style="display:none"></div>
       </div>
     </div>
 
-    <!-- RIGHT -->
-    <div class="right-panel">
-      <div class="right-header">
-        <span class="right-title">Nhận xét chi tiết</span>
-        <div class="right-stats">
-          <span class="stat-chip sc-red" id="stat-total">0 lỗi</span>
-          <span class="stat-chip sc-green" id="stat-approved">0 duyệt</span>
-        </div>
+    <!-- RESULT VIEW -->
+    <div id="result-view" class="result-view">
+      <div class="result-header">
+        <span class="result-name" id="result-name"></span>
+        <span class="chip blue" id="result-week-chip">Tuần ?</span>
+        <span class="chip green">✓ Đã chấm</span>
+        <button class="btn-reset" onclick="resetAll()">↺ Chấm bài khác</button>
       </div>
-
-      <div class="comments-list" id="comments-list">
-        <div class="right-empty">Chấm bài để xem<br>nhận xét AI tự động</div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-chip legend-gr">GR</span> Lỗi ngữ pháp</div>
+        <div class="legend-item"><span class="legend-chip legend-lr">LR</span> Lỗi từ vựng</div>
+        <div class="legend-item"><span class="legend-approved">✓</span> Đã duyệt</div>
       </div>
-
-      <div class="right-footer">
-        <div class="footer-row">
-          <button class="btn-approve-all" id="btn-approve-all" onclick="approveAll()" disabled>✓ Duyệt tất cả</button>
-        </div>
-        <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
-      </div>
+      <div class="essay-view" id="essay-view"></div>
     </div>
-
   </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-head">
+      <span class="right-title">Nhận xét chi tiết</span>
+      <div class="stat-group">
+        <span class="stat stat-red" id="stat-total">0 lỗi</span>
+        <span class="stat stat-green" id="stat-approved">0 duyệt</span>
+      </div>
+    </div>
+
+    <div class="cards-area" id="cards-area">
+      <div class="cards-empty">Nhập API key + bài viết<br>rồi nhấn "Chấm bài" để xem nhận xét</div>
+    </div>
+
+    <div class="right-foot">
+      <button class="btn-approve-all" id="btn-approve-all" onclick="approveAll()" disabled>✓ Duyệt tất cả</button>
+      <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
+// ════ Week data ════
 const WEEK_DATA = {
   1:'harm sb/sth | allow sb to do sth / at an early age | spend time doing sth / before an exam | force sb to do sth / extra after-school classes | spend money on sth / savings / district 1 | violent content / influence sb/sth / behaviour',
   2:'consider (v) / apply to sth / vì → because + S-FV | ask sb to do sth / homework | make sb + adj / office worker / burnout | unlike + N / decide (v) / challenging (adj) | provide sb with sth / job opportunity | discuss / future plan / before + V-ing / drop out of',
@@ -365,216 +261,303 @@ const WEEK_DATA = {
   9:'6 phần A-F: Viết câu | Sửa lỗi | Adj/Adv | Prep phrase | Adj clause | Adj clause + conjunctions',
 };
 
-// ── State ──
-let correctedHtml = '';
-let errors = [];         // [{id, type, ai_comment}]
-let cardStates = {};     // {id: {text, approved, editing, deleted}}
+// ════ State ════
+let errors = [];          // [{id, type, ai_comment, wrong, right}]
+let cardStates = {};      // { id: {text, approved, editing, deleted} }
 let activeId = null;
-let currentSession = null;
-let essayText = '';
 
-// ── Nav ──
-function showHome(){
-  document.getElementById('screen-home').classList.add('active');
-  document.getElementById('screen-mark').classList.remove('active');
-  renderHistory();
-}
-function showMark(session){
-  document.getElementById('screen-home').classList.remove('active');
-  document.getElementById('screen-mark').classList.add('active');
-  if(!session) resetForm();
-}
+// ════ Utils ════
+function $(sel){return document.querySelector(sel);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function renderBold(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
 
-// ── Form ──
-function updatePrompt(){
-  const w=document.getElementById('week').value;
-  const box=document.getElementById('prompt-box');
+// ════ API Key ════
+function saveKey(){
+  const k=$('#api-key').value.trim();
+  if(!k) return;
+  localStorage.setItem('root_api_key',k);
+  const s=$('#key-saved');
+  s.classList.add('show');
+  setTimeout(()=>s.classList.remove('show'),2000);
+  checkGradeBtn();
+}
+(function loadKey(){
+  const k=localStorage.getItem('root_api_key');
+  if(k){$('#api-key').value=k;$('#key-saved').classList.add('show');setTimeout(()=>$('#key-saved').classList.remove('show'),1500);}
+})();
+$('#api-key').addEventListener('input',checkGradeBtn);
+$('#student-name').addEventListener('input',checkGradeBtn);
+
+// ════ Form helpers ════
+function updatePromptDisplay(){
+  const w=$('#week').value;
+  const box=$('#prompt-display');
   if(w&&WEEK_DATA[w]){box.textContent=WEEK_DATA[w];box.classList.remove('empty');}
   else{box.textContent='Chọn tuần để xem đề bài...';box.classList.add('empty');}
-  checkBtn();
+  checkGradeBtn();
 }
-function updateWordCount(){
-  const t=document.getElementById('essay').value.trim();
+function onEssayInput(){
+  const t=$('#essay').value.trim();
   const n=t?t.split(/\s+/).length:0;
-  const el=document.getElementById('word-count');
-  el.textContent=n+' từ'; el.className='word-count '+(n>=10?'ok':'low');
-  checkBtn();
+  const el=$('#word-count');
+  el.textContent=n+' từ';
+  el.className='word-count '+(n>=10?'ok':'low');
+  checkGradeBtn();
 }
-function checkBtn(){
-  const name=document.getElementById('student-name').value.trim();
-  const week=document.getElementById('week').value;
-  const essay=document.getElementById('essay').value.trim();
-  document.getElementById('btn-grade').disabled=!(name&&week&&essay.split(/\s+/).filter(Boolean).length>=5);
+function checkGradeBtn(){
+  const ok=$('#student-name').value.trim()
+        && $('#week').value
+        && $('#api-key').value.trim()
+        && $('#essay').value.trim().split(/\s+/).filter(Boolean).length>=5;
+  $('#btn-grade').disabled=!ok;
 }
-document.getElementById('student-name').addEventListener('input',checkBtn);
 
-// ── Grade ──
+// ════ Grade essay ════
 async function gradeEssay(){
-  const name=document.getElementById('student-name').value.trim();
-  const week=document.getElementById('week').value;
-  essayText=document.getElementById('essay').value.trim();
-  const btn=document.getElementById('btn-grade');
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang chấm...';
-  document.getElementById('err-banner').style.display='none';
+  const name=$('#student-name').value.trim();
+  const week=Number($('#week').value);
+  const essay=$('#essay').value.trim();
+  const apiKey=$('#api-key').value.trim();
+  const btn=$('#btn-grade');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Đang chấm...';
+  $('#error-banner').style.display='none';
 
   try{
-    const res=await fetch('/api/grade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({week:Number(week),essay:essayText})});
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||'Lỗi server.');}
+    const res=await fetch('/api/grade',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({week,essay,apiKey}),
+    });
     const data=await res.json();
+    if(!res.ok){
+      if(res.status===401) throw new Error('API key không hợp lệ.');
+      if(res.status===429) throw new Error('Rate limit. Chờ một lúc rồi thử lại.');
+      throw new Error(data?.error||'Lỗi server.');
+    }
 
-    correctedHtml=data.corrected_html||'';
-    errors=data.errors||[];
+    const correctedHtml=data.corrected_html||'';
+    errors=parseErrors(data.errors||[],correctedHtml);
     cardStates={};
     errors.forEach(e=>{
       cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
     });
     activeId=null;
-
-    currentSession={id:Date.now(),name,week:Number(week),essay:essayText,correctedHtml,errors,cardStates,errorCount:errors.length,time:new Date().toISOString()};
-    saveSession(currentSession);
-    showResults(name,week);
+    showResult(name,week,correctedHtml);
   }catch(err){
-    const b=document.getElementById('err-banner');
-    b.textContent=err.message||'Không kết nối được server.';
+    const b=$('#error-banner');
+    b.textContent=err.message;
     b.style.display='block';
   }
-  btn.disabled=false; btn.innerHTML='Chấm bài';
+  btn.disabled=false;
+  btn.textContent='Chấm bài';
+  checkGradeBtn();
 }
 
-// ── Show results ──
-function showResults(name,week){
-  document.getElementById('input-section').style.display='none';
-  document.getElementById('essay-result').style.display='block';
-  document.getElementById('result-name').textContent=name;
-  document.getElementById('result-week-chip').textContent='Tuần '+week;
-
-  const rendered=document.getElementById('essay-rendered');
-  rendered.innerHTML=correctedHtml.replace(/\n/g,'<br>');
-
-  // Restore visual states from saved cardStates
-  Object.entries(cardStates).forEach(([id,st])=>{
-    const sp=rendered.querySelector('span[id="'+id+'"]');
-    if(!sp) return;
-    if(st.deleted) sp.classList.add('span-deleted');
-    else if(st.approved) sp.classList.add('approved');
+// ════ Parse errors: extract wrong/right text from corrected_html ════
+function parseErrors(errArr,html){
+  // Use a temp div to extract span contents safely
+  const tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  return errArr.map(e=>{
+    // Spans use class='grammar' or 'vocabulary' from API
+    const span=tmp.querySelector('span[id="'+e.id+'"]');
+    const wrong=span?.querySelector('s')?.textContent||'';
+    const right=span?.querySelector('mark')?.textContent||'';
+    return {...e, wrong, right};
   });
-
-  setupSpanHandlers();
-  renderCommentCards();
-  updateStats();
 }
 
-// ── Span interaction ──
-function setupSpanHandlers(){
-  document.getElementById('essay-rendered').querySelectorAll('span.grammar,span.vocabulary').forEach(span=>{
+// ════ Show result view ════
+function showResult(name,week,correctedHtml){
+  $('#input-view').style.display='none';
+  $('#result-view').style.display='block';
+  $('#result-name').textContent=name;
+  $('#result-week-chip').textContent='Tuần '+week;
+
+  // Render essay with custom span classes (err-grammar / err-vocab)
+  const essayView=$('#essay-view');
+  // Convert API spans (class='grammar'/'vocabulary') → our internal classes
+  const transformed=correctedHtml
+    .replace(/class=['"]grammar['"]/g,'class="err-grammar"')
+    .replace(/class=['"]vocabulary['"]/g,'class="err-vocab"')
+    .replace(/\n/g,'<br>');
+  essayView.innerHTML=transformed;
+
+  // Click handlers
+  essayView.querySelectorAll('span.err-grammar, span.err-vocab').forEach(span=>{
     span.addEventListener('click',()=>{
       if(cardStates[span.id]?.deleted) return;
       selectError(span.id);
     });
   });
+
+  renderCards();
+  updateStats();
 }
 
-function selectError(id){
-  // Deselect previous
-  if(activeId){
-    const prev=document.querySelector('#essay-rendered span[id="'+activeId+'"]');
-    if(prev) prev.classList.remove('active-span');
-    const prevCard=document.getElementById('card-'+activeId);
-    if(prevCard) prevCard.classList.remove('active-card');
-  }
-  activeId=id;
-  const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(span){span.classList.add('active-span');span.scrollIntoView({block:'nearest',behavior:'smooth'});}
-  const card=document.getElementById('card-'+id);
-  if(card){card.classList.add('active-card');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
-}
-
-// ── Render comment cards ──
-function renderCommentCards(){
-  const list=document.getElementById('comments-list');
+// ════ Render cards using DOM (NOT innerHTML for safety) ════
+function renderCards(){
+  const area=$('#cards-area');
+  area.innerHTML='';
   const visible=errors.filter(e=>!cardStates[e.id]?.deleted);
 
   if(!visible.length){
-    list.innerHTML='<div class="right-empty">'+(errors.length?'Tất cả lỗi đã bị xoá':'Không có lỗi nào trong bài')+'</div>';
+    const empty=document.createElement('div');
+    empty.className='cards-empty';
+    empty.textContent=errors.length?'Tất cả nhận xét đã được xoá':'Bài này không có lỗi 🎉';
+    area.appendChild(empty);
     return;
   }
 
-  list.innerHTML=visible.map((err,i)=>{
-    const st=cardStates[err.id]||{text:'',approved:false,editing:false};
-    const isGr=err.type==='grammar';
-    const isActive=err.id===activeId;
-
-    // Get span text for correction preview (extract text content to avoid raw HTML injection)
-    const span=document.querySelector('#essay-rendered span[id="'+err.id+'"]');
-    const wrongText=span?.querySelector('s')?.textContent||'';
-    const rightText=span?.querySelector('mark')?.textContent||'';
-    const corrHtml=(wrongText?`<s>${esc(wrongText)}</s>`:'')+' '+(rightText?`<mark>${esc(rightText)}</mark>`:'');
-
-    let cardClass='comment-card';
-    if(isActive) cardClass+=' active-card';
-    if(st.approved&&!st.editing) cardClass+=' approved-card';
-    if(st.editing) cardClass+=' editing-card';
-
-    const bodyHtml=st.editing
-      ? `<textarea class="card-textarea" id="ta-${err.id}">${esc(st.text)}</textarea>`
-      : `<div class="card-text">${renderMd(st.text)}</div>`;
-
-    const actionsHtml=st.editing
-      ? `<button class="btn-cancel-c" onclick="event.stopPropagation();cancelEdit('${err.id}')">Huỷ</button>
-         <button class="btn-save-c" onclick="event.stopPropagation();saveEdit('${err.id}')">✓ Lưu & Duyệt</button>
-         <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
-      : st.approved
-        ? `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa lại</button>
-           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
-        : `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa</button>
-           <button class="btn-approve" onclick="event.stopPropagation();approveCard('${err.id}')">✓ Duyệt</button>
-           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`;
-
-    return`<div class="${cardClass}" id="card-${err.id}" onclick="selectError('${err.id}')">
-      <div class="card-header">
-        ${st.approved&&!st.editing?'<span class="approved-icon">✓</span>':''}
-        <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GR':'LR'}</span>
-        <div class="card-correction ${isGr?'':'voc'}">${corrHtml}</div>
-        <span class="card-num">#${i+1}</span>
-      </div>
-      <div class="card-body">${bodyHtml}</div>
-      <div class="card-actions">${actionsHtml}</div>
-    </div>`;
-  }).join('');
-
-  // Auto-resize textareas
-  document.querySelectorAll('.card-textarea').forEach(ta=>{
-    ta.style.height='auto';
-    ta.style.height=ta.scrollHeight+'px';
-    ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+  visible.forEach((err,i)=>{
+    area.appendChild(buildCard(err,i+1));
   });
 }
 
-// ── Card actions ──
+function buildCard(err,index){
+  const st=cardStates[err.id]||{text:'',approved:false,editing:false};
+  const isGr=err.type==='grammar';
+  const isActive=err.id===activeId;
+
+  const card=document.createElement('div');
+  card.className='cmt';
+  card.id='card-'+err.id;
+  if(isActive) card.classList.add('is-active');
+  if(st.approved && !st.editing) card.classList.add('is-approved');
+  if(st.editing) card.classList.add('is-editing');
+  card.addEventListener('click',()=>selectError(err.id));
+
+  // ── HEAD ──
+  const head=document.createElement('div');
+  head.className='cmt-head';
+
+  if(st.approved && !st.editing){
+    const ck=document.createElement('span');
+    ck.className='cmt-checkmark';
+    ck.textContent='✓';
+    head.appendChild(ck);
+  }
+
+  const badge=document.createElement('span');
+  badge.className='cmt-badge '+(isGr?'gr':'lr');
+  badge.textContent=isGr?'GR':'LR';
+  head.appendChild(badge);
+
+  const corr=document.createElement('div');
+  corr.className='cmt-correction'+(isGr?'':' lr');
+  if(err.wrong){
+    const s=document.createElement('s');
+    s.textContent=err.wrong;
+    corr.appendChild(s);
+  }
+  if(err.wrong && err.right){
+    const arrow=document.createElement('span');
+    arrow.className='cmt-arrow';
+    arrow.textContent='→';
+    corr.appendChild(arrow);
+  }
+  if(err.right){
+    const m=document.createElement('mark');
+    m.textContent=err.right;
+    corr.appendChild(m);
+  }
+  head.appendChild(corr);
+
+  const num=document.createElement('span');
+  num.className='cmt-num';
+  num.textContent='#'+index;
+  head.appendChild(num);
+
+  card.appendChild(head);
+
+  // ── BODY ──
+  const body=document.createElement('div');
+  body.className='cmt-body';
+  if(st.editing){
+    const ta=document.createElement('textarea');
+    ta.className='cmt-textarea';
+    ta.id='ta-'+err.id;
+    ta.value=st.text;
+    ta.addEventListener('click',e=>e.stopPropagation());
+    ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+    body.appendChild(ta);
+    setTimeout(()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},20);
+  } else {
+    const txt=document.createElement('div');
+    txt.className='cmt-text';
+    if(st.text && st.text.trim()){
+      txt.innerHTML=renderBold(st.text);
+    } else {
+      const empty=document.createElement('span');
+      empty.className='cmt-text-empty';
+      empty.textContent='Không có comment';
+      txt.appendChild(empty);
+    }
+    body.appendChild(txt);
+  }
+  card.appendChild(body);
+
+  // ── ACTIONS ──
+  const actions=document.createElement('div');
+  actions.className='cmt-actions';
+
+  if(st.editing){
+    actions.appendChild(makeBtn('Huỷ','btn-cancel',e=>{e.stopPropagation();cancelEdit(err.id);}));
+    actions.appendChild(makeBtn('✓ Lưu & Duyệt','btn-save',e=>{e.stopPropagation();saveEdit(err.id);}));
+    actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
+  } else if(st.approved){
+    actions.appendChild(makeBtn('Sửa lại','btn-edit',e=>{e.stopPropagation();startEdit(err.id);}));
+    actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
+  } else {
+    actions.appendChild(makeBtn('Sửa','btn-edit',e=>{e.stopPropagation();startEdit(err.id);}));
+    actions.appendChild(makeBtn('✓ Duyệt','btn-approve',e=>{e.stopPropagation();approveCard(err.id);}));
+    actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
+  }
+  card.appendChild(actions);
+
+  return card;
+}
+
+function makeBtn(text,cls,onClick){
+  const b=document.createElement('button');
+  b.className='btn-sm '+cls;
+  b.textContent=text;
+  b.addEventListener('click',onClick);
+  return b;
+}
+
+// ════ Card actions ════
+function selectError(id){
+  if(activeId){
+    const prev=document.querySelector('.essay-view span[id="'+activeId+'"]');
+    if(prev) prev.classList.remove('is-active');
+    const prevCard=document.getElementById('card-'+activeId);
+    if(prevCard) prevCard.classList.remove('is-active');
+  }
+  activeId=id;
+  const span=document.querySelector('.essay-view span[id="'+id+'"]');
+  if(span){span.classList.add('is-active');span.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  const card=document.getElementById('card-'+id);
+  if(card){card.classList.add('is-active');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+
 function approveCard(id){
   cardStates[id].approved=true;
   cardStates[id].editing=false;
-  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(sp){sp.classList.add('approved');sp.classList.remove('active-span');}
+  const sp=document.querySelector('.essay-view span[id="'+id+'"]');
+  if(sp){sp.classList.add('is-approved');sp.classList.remove('is-active');}
   if(activeId===id) activeId=null;
-  updateStats(); autosave(); renderCommentCards();
+  updateStats();renderCards();
 }
 
 function startEdit(id){
-  // Close other edits
-  Object.keys(cardStates).forEach(k=>{
-    if(k!==id) cardStates[k].editing=false;
-  });
+  Object.keys(cardStates).forEach(k=>{if(k!==id) cardStates[k].editing=false;});
   cardStates[id].editing=true;
   cardStates[id].approved=false;
-  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(sp) sp.classList.remove('approved');
-  updateStats(); renderCommentCards();
-  selectError(id);
-  setTimeout(()=>{
-    const ta=document.getElementById('ta-'+id);
-    if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}
-  },50);
+  const sp=document.querySelector('.essay-view span[id="'+id+'"]');
+  if(sp) sp.classList.remove('is-approved');
+  updateStats();renderCards();selectError(id);
 }
 
 function saveEdit(id){
@@ -586,125 +569,75 @@ function saveEdit(id){
 
 function cancelEdit(id){
   cardStates[id].editing=false;
-  renderCommentCards();
+  renderCards();
 }
 
 function deleteCard(id){
   cardStates[id].deleted=true;
   cardStates[id].editing=false;
-  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(sp){sp.classList.remove('approved','active-span');sp.classList.add('span-deleted');}
+  const sp=document.querySelector('.essay-view span[id="'+id+'"]');
+  if(sp){sp.classList.remove('is-approved','is-active');sp.classList.add('is-deleted');}
   if(activeId===id) activeId=null;
-  updateStats(); autosave(); renderCommentCards();
+  updateStats();renderCards();
 }
 
 function approveAll(){
   errors.forEach(e=>{
-    if(!cardStates[e.id].deleted&&!cardStates[e.id].approved&&!cardStates[e.id].editing){
+    if(!cardStates[e.id].deleted && !cardStates[e.id].approved){
       cardStates[e.id].approved=true;
-      const sp=document.querySelector('#essay-rendered span[id="'+e.id+'"]');
-      if(sp) sp.classList.add('approved');
+      cardStates[e.id].editing=false;
+      const sp=document.querySelector('.essay-view span[id="'+e.id+'"]');
+      if(sp) sp.classList.add('is-approved');
     }
   });
   activeId=null;
-  updateStats(); autosave(); renderCommentCards();
+  updateStats();renderCards();
 }
 
 function copyAll(){
-  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted);
+  const approved=errors.filter(e=>cardStates[e.id]?.approved && !cardStates[e.id]?.deleted);
   if(!approved.length) return;
-  const parts=approved.map(e=>'['+(e.type==='grammar'?'GR':'LR')+']\n'+cardStates[e.id].text);
+  const parts=approved.map((e,i)=>{
+    const tag=e.type==='grammar'?'GR':'LR';
+    const corr=(e.wrong||'')+(e.wrong&&e.right?' → ':'')+(e.right||'');
+    return `[${tag}] ${corr}\n${cardStates[e.id].text}`;
+  });
   navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
-    const b=document.getElementById('btn-copy-all');
-    b.textContent='✓ Đã copy!';
-    setTimeout(()=>b.textContent='Copy tất cả nhận xét đã duyệt',2000);
+    const b=$('#btn-copy-all');
+    const orig=b.textContent;
+    b.textContent='✓ Đã copy '+approved.length+' nhận xét!';
+    setTimeout(()=>b.textContent=orig,2200);
   });
 }
 
-// ── Stats ──
 function updateStats(){
   const total=errors.filter(e=>!cardStates[e.id]?.deleted).length;
-  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted).length;
-  document.getElementById('stat-total').textContent=total+' lỗi';
-  document.getElementById('stat-approved').textContent=approved+' duyệt';
-  document.getElementById('btn-copy-all').disabled=approved===0;
-  document.getElementById('btn-approve-all').disabled=approved>=total;
+  const approved=errors.filter(e=>cardStates[e.id]?.approved && !cardStates[e.id]?.deleted).length;
+  $('#stat-total').textContent=total+' lỗi';
+  $('#stat-approved').textContent=approved+' duyệt';
+  $('#btn-copy-all').disabled=approved===0;
+  $('#btn-approve-all').disabled=approved>=total||total===0;
 }
 
-// ── Reset ──
-function resetForm(){
-  correctedHtml=''; errors=[]; cardStates={}; activeId=null; essayText=''; currentSession=null;
-  document.getElementById('student-name').value='';
-  document.getElementById('week').value='';
-  document.getElementById('essay').value='';
-  document.getElementById('prompt-box').textContent='Chọn tuần để xem đề bài...';
-  document.getElementById('prompt-box').classList.add('empty');
-  document.getElementById('word-count').textContent='0 từ';
-  document.getElementById('word-count').className='word-count low';
-  document.getElementById('btn-grade').disabled=true;
-  document.getElementById('err-banner').style.display='none';
-  document.getElementById('input-section').style.display='block';
-  document.getElementById('essay-result').style.display='none';
-  document.getElementById('comments-list').innerHTML='<div class="right-empty">Chấm bài để xem<br>nhận xét AI tự động</div>';
-  document.getElementById('stat-total').textContent='0 lỗi';
-  document.getElementById('stat-approved').textContent='0 duyệt';
-  document.getElementById('btn-copy-all').disabled=true;
-  document.getElementById('btn-approve-all').disabled=true;
+function resetAll(){
+  errors=[];cardStates={};activeId=null;
+  $('#student-name').value='';
+  $('#week').value='';
+  $('#essay').value='';
+  $('#prompt-display').textContent='Chọn tuần để xem đề bài...';
+  $('#prompt-display').classList.add('empty');
+  $('#word-count').textContent='0 từ';
+  $('#word-count').className='word-count low';
+  $('#error-banner').style.display='none';
+  $('#input-view').style.display='block';
+  $('#result-view').style.display='none';
+  $('#cards-area').innerHTML='<div class="cards-empty">Nhập API key + bài viết<br>rồi nhấn "Chấm bài" để xem nhận xét</div>';
+  $('#stat-total').textContent='0 lỗi';
+  $('#stat-approved').textContent='0 duyệt';
+  $('#btn-copy-all').disabled=true;
+  $('#btn-approve-all').disabled=true;
+  checkGradeBtn();
 }
-
-// ── localStorage ──
-function getSessions(){try{return JSON.parse(localStorage.getItem('root_sessions')||'[]');}catch{return[];}}
-function saveSession(s){const arr=getSessions();const i=arr.findIndex(x=>x.id===s.id);if(i>=0)arr[i]=s;else arr.unshift(s);localStorage.setItem('root_sessions',JSON.stringify(arr.slice(0,100)));}
-function autosave(){if(!currentSession)return;currentSession.cardStates=cardStates;saveSession(currentSession);}
-
-// ── History ──
-function renderHistory(){
-  const sessions=getSessions();
-  document.getElementById('home-sub').textContent=sessions.length+' bài';
-  const c=document.getElementById('history-container');
-  if(!sessions.length){
-    c.innerHTML=`<div class="empty-state"><div class="empty-icon">📝</div><h3>Chưa có bài nào được chấm</h3><p>Bấm "+ Chấm bài mới" để bắt đầu</p><button class="btn-primary" onclick="showMark()" style="margin:0 auto">+ Chấm bài mới</button></div>`;
-    return;
-  }
-  c.innerHTML='<div class="history-list">'+sessions.map(s=>{
-    const d=new Date(s.time);
-    const t=d.toLocaleDateString('vi-VN')+' '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-    const approved=Object.values(s.cardStates||{}).filter(x=>x.approved&&!x.deleted).length;
-    return`<div class="history-card" onclick="openSession(${s.id})">
-      <div><div class="h-name">${esc(s.name)}</div><div class="h-meta">${s.errorCount} lỗi · ${approved} đã duyệt · ${t}</div></div>
-      <div class="h-right">
-        <span class="chip chip-week">Tuần ${s.week}</span>
-        <span class="chip ${s.errorCount===0?'chip-ok':'chip-err'}">${s.errorCount===0?'Không lỗi':s.errorCount+' lỗi'}</span>
-      </div>
-    </div>`;
-  }).join('')+'</div>';
-}
-
-function openSession(id){
-  const s=getSessions().find(x=>x.id===id);
-  if(!s) return;
-  currentSession=s;
-  correctedHtml=s.correctedHtml||'';
-  errors=s.errors||[];
-  cardStates=s.cardStates||{};
-  errors.forEach(e=>{
-    if(!cardStates[e.id]) cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
-  });
-  essayText=s.essay||'';
-  activeId=null;
-  document.getElementById('student-name').value=s.name;
-  document.getElementById('week').value=s.week;
-  document.getElementById('essay').value=s.essay||'';
-  updatePrompt(); updateWordCount();
-  showMark(s);
-  showResults(s.name,s.week);
-}
-
-// ── Utils ──
-function renderMd(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-renderHistory();
 </script>
 </body>
 </html>
