@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/grade.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "public/prototype.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/grade", "dest": "/api/grade.js" },
+    { "src": "/prototype.html", "dest": "/public/prototype.html" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
