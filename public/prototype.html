@@ -190,35 +190,6 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
     <!-- INPUT FORM -->
     <div id="input-view">
       <div class="panel">
-        <h2>Thông tin bài chấm</h2>
-        <div class="row-2">
-          <div class="field">
-            <label>Tên học sinh</label>
-            <input type="text" id="student-name" placeholder="Nhập tên..."/>
-          </div>
-          <div class="field">
-            <label>Tuần học</label>
-            <select id="week" onchange="updatePromptDisplay()">
-              <option value="">-- Chọn tuần --</option>
-              <option value="1">Tuần 1 — Verb patterns</option>
-              <option value="2">Tuần 2 — Collocations</option>
-              <option value="3">Tuần 3 — Thì động từ</option>
-              <option value="4">Tuần 4 — Adj vs Adv</option>
-              <option value="5">Tuần 5 — Prep phrase</option>
-              <option value="6">Tuần 6 — Adj clause (xác định)</option>
-              <option value="7">Tuần 7 — Adj clause (không xác định)</option>
-              <option value="8">Tuần 8 — Bị động</option>
-              <option value="9">Tuần 9 — Tổng hợp</option>
-            </select>
-          </div>
-        </div>
-        <div class="field" style="margin-top:12px">
-          <label>Đề bài</label>
-          <div class="prompt-display empty" id="prompt-display">Chọn tuần để xem đề bài...</div>
-        </div>
-      </div>
-
-      <div class="panel">
         <h2>Bài làm của học sinh</h2>
         <div class="field">
           <textarea id="essay" placeholder="Paste bài viết của học sinh vào đây..." oninput="onEssayInput()"></textarea>
@@ -232,9 +203,7 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
     <!-- RESULT VIEW -->
     <div id="result-view" class="result-view">
       <div class="result-header">
-        <span class="result-name" id="result-name"></span>
-        <span class="chip blue" id="result-week-chip">Tuần ?</span>
-        <span class="chip green">✓ Đã chấm</span>
+        <span class="chip green">✓ Đã chấm xong</span>
         <button class="btn-reset" onclick="resetAll()">↺ Chấm bài khác</button>
       </div>
       <div class="legend">
@@ -307,16 +276,8 @@ function saveKey(){
   if(k){$('#api-key').value=k;$('#key-saved').classList.add('show');setTimeout(()=>$('#key-saved').classList.remove('show'),1500);}
 })();
 $('#api-key').addEventListener('input',checkGradeBtn);
-$('#student-name').addEventListener('input',checkGradeBtn);
 
 // ════ Form helpers ════
-function updatePromptDisplay(){
-  const w=$('#week').value;
-  const box=$('#prompt-display');
-  if(w&&WEEK_DATA[w]){box.textContent=WEEK_DATA[w];box.classList.remove('empty');}
-  else{box.textContent='Chọn tuần để xem đề bài...';box.classList.add('empty');}
-  checkGradeBtn();
-}
 function onEssayInput(){
   const t=$('#essay').value.trim();
   const n=t?t.split(/\s+/).length:0;
@@ -326,17 +287,13 @@ function onEssayInput(){
   checkGradeBtn();
 }
 function checkGradeBtn(){
-  const ok=$('#student-name').value.trim()
-        && $('#week').value
-        && $('#api-key').value.trim()
+  const ok=$('#api-key').value.trim()
         && $('#essay').value.trim().split(/\s+/).filter(Boolean).length>=5;
   $('#btn-grade').disabled=!ok;
 }
 
 // ════ Grade essay ════
 async function gradeEssay(){
-  const name=$('#student-name').value.trim();
-  const week=Number($('#week').value);
   const essay=$('#essay').value.trim();
   const apiKey=$('#api-key').value.trim();
   const btn=$('#btn-grade');
@@ -348,7 +305,7 @@ async function gradeEssay(){
     const res=await fetch('/api/grade',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({week,essay,apiKey}),
+      body:JSON.stringify({essay,apiKey}),
     });
     const data=await res.json();
     if(!res.ok){
@@ -371,7 +328,7 @@ async function gradeEssay(){
       };
     });
     activeId=null;
-    showResult(name,week,correctedHtml);
+    showResult(correctedHtml);
   }catch(err){
     const b=$('#error-banner');
     b.textContent=err.message;
@@ -397,11 +354,9 @@ function parseErrors(errArr,html){
 }
 
 // ════ Show result view ════
-function showResult(name,week,correctedHtml){
+function showResult(correctedHtml){
   $('#input-view').style.display='none';
   $('#result-view').style.display='block';
-  $('#result-name').textContent=name;
-  $('#result-week-chip').textContent='Tuần '+week;
 
   // Render essay with custom span classes (err-grammar / err-vocab)
   const essayView=$('#essay-view');
@@ -719,11 +674,7 @@ function updateStats(){
 
 function resetAll(){
   errors=[];cardStates={};activeId=null;
-  $('#student-name').value='';
-  $('#week').value='';
   $('#essay').value='';
-  $('#prompt-display').textContent='Chọn tuần để xem đề bài...';
-  $('#prompt-display').classList.add('empty');
   $('#word-count').textContent='0 từ';
   $('#word-count').className='word-count low';
   $('#error-banner').style.display='none';

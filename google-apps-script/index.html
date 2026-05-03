@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chấm bài ROOT — Youpass</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white; padding: 20px 24px;
+  }
+  header h1 { font-size: 20px; font-weight: 700; }
+  header p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+
+  .card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 16px;
+  }
+
+  label { font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
+
+  select {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #d1d5db;
+    border-radius: 8px; font-size: 14px; background: white;
+    appearance: none; cursor: pointer;
+  }
+  select:focus { outline: none; border-color: #3b82f6; }
+
+  textarea {
+    width: 100%; padding: 12px; border: 1.5px solid #d1d5db;
+    border-radius: 8px; font-size: 14px; resize: vertical;
+    min-height: 160px; font-family: inherit; line-height: 1.6;
+  }
+  textarea:focus { outline: none; border-color: #3b82f6; }
+
+  .btn-grade {
+    width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white; border: none; border-radius: 8px; font-size: 15px;
+    font-weight: 600; cursor: pointer; margin-top: 12px; transition: opacity 0.2s;
+  }
+  .btn-grade:hover { opacity: 0.9; }
+  .btn-grade:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;
+    padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-top: 12px;
+  }
+
+  .stats {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .stat-badge {
+    padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  }
+  .stat-total { background: #eff6ff; color: #1d4ed8; }
+  .stat-approved { background: #f0fdf4; color: #15803d; }
+
+  .btn-copy {
+    margin-left: auto; padding: 8px 16px; background: #059669;
+    color: white; border: none; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-copy:hover { opacity: 0.85; }
+  .btn-copy:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .comment-card {
+    border: 1.5px solid #e5e7eb; border-radius: 10px;
+    padding: 16px; margin-bottom: 12px; transition: all 0.2s;
+  }
+  .comment-card.approved { border-color: #86efac; background: #f0fdf4; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .badge-sentence {
+    background: #dbeafe; color: #1e40af; padding: 2px 10px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+  }
+  .badge-error {
+    background: #fef9c3; color: #854d0e; padding: 2px 10px;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #d1d5db; margin-left: auto;
+    transition: background 0.2s;
+  }
+  .status-dot.approved { background: #22c55e; }
+
+  .error-text {
+    background: #fef2f2; border-left: 3px solid #ef4444;
+    padding: 8px 12px; border-radius: 4px; font-size: 13px;
+    color: #7f1d1d; margin-bottom: 10px; font-style: italic;
+  }
+
+  .comment-text { font-size: 14px; line-height: 1.7; color: #1f2937; margin-bottom: 12px; }
+  .comment-text b { color: #1d4ed8; }
+
+  .card-actions { display: flex; gap: 8px; }
+  .btn-approve {
+    padding: 6px 16px; background: #22c55e; color: white;
+    border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-approve:hover { opacity: 0.85; }
+  .btn-approve.approved { background: #16a34a; }
+
+  .btn-edit {
+    padding: 6px 16px; background: white; color: #6b7280;
+    border: 1.5px solid #d1d5db; border-radius: 6px; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-edit:hover { border-color: #9ca3af; color: #374151; }
+
+  .edit-area {
+    width: 100%; padding: 10px; border: 1.5px solid #93c5fd;
+    border-radius: 6px; font-size: 14px; line-height: 1.6;
+    font-family: inherit; resize: vertical; min-height: 80px;
+    margin-bottom: 8px;
+  }
+  .edit-actions { display: flex; gap: 8px; }
+  .btn-save {
+    padding: 6px 16px; background: #3b82f6; color: white;
+    border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-cancel {
+    padding: 6px 16px; background: white; color: #6b7280;
+    border: 1.5px solid #d1d5db; border-radius: 6px; font-size: 13px; cursor: pointer;
+  }
+
+  .token-info {
+    text-align: center; font-size: 12px; color: #9ca3af; margin-top: 8px;
+  }
+
+  #results { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chấm bài ROOT</h1>
+  <p>IELTS Youpass — AI Writing Feedback</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <label for="week">Tuần học</label>
+    <select id="week">
+      <option value="1">Tuần 1 — Verb patterns & Prepositions</option>
+      <option value="2">Tuần 2 — Collocations & Verb patterns</option>
+      <option value="3">Tuần 3 — Thì động từ theo ngữ cảnh</option>
+      <option value="4">Tuần 4 — Adj vs Adv</option>
+      <option value="5">Tuần 5 — Prep phrase & Liên từ</option>
+      <option value="6">Tuần 6 — Mệnh đề tính từ xác định</option>
+      <option value="7">Tuần 7 — Mệnh đề tính từ không xác định</option>
+      <option value="8">Tuần 8 — Bị động</option>
+      <option value="9">Tuần 9 — Tổng hợp</option>
+    </select>
+
+    <br>
+    <label for="essay" style="margin-top:12px;">Bài viết học sinh</label>
+    <textarea id="essay" placeholder="Paste bài viết vào đây..."></textarea>
+
+    <button class="btn-grade" id="btn-grade" onclick="gradeEssay()">Chấm bài</button>
+    <div id="error-msg" class="error-box" style="display:none;"></div>
+  </div>
+
+  <div id="results">
+    <div class="stats" id="stats">
+      <span class="stat-badge stat-total" id="stat-total"></span>
+      <span class="stat-badge stat-approved" id="stat-approved"></span>
+      <button class="btn-copy" id="btn-copy" onclick="copyApproved()">Copy đã Approve</button>
+    </div>
+    <div id="comments-list"></div>
+    <div class="token-info" id="token-info"></div>
+  </div>
+
+</div>
+
+<script>
+let comments = [];
+
+function gradeEssay() {
+  const week = document.getElementById('week').value;
+  const essay = document.getElementById('essay').value.trim();
+
+  if (!essay) { showError('Vui lòng nhập bài viết.'); return; }
+
+  const btn = document.getElementById('btn-grade');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Đang chấm...';
+  hideError();
+  document.getElementById('results').style.display = 'none';
+
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(onError)
+    .gradeEssay(week, essay);
+}
+
+function onSuccess(data) {
+  comments = (data.comments || []).map(c => ({ ...c, status: 'pending' }));
+  renderResults();
+
+  const usage = data.usage;
+  if (usage) {
+    document.getElementById('token-info').textContent =
+      'Tokens: ' + usage.input_tokens + ' input / ' + usage.output_tokens + ' output';
+  }
+
+  document.getElementById('results').style.display = 'block';
+  resetBtn();
+}
+
+function onError(err) {
+  showError(err.message || 'Lỗi không xác định. Thử lại nhé.');
+  resetBtn();
+}
+
+function resetBtn() {
+  const btn = document.getElementById('btn-grade');
+  btn.disabled = false;
+  btn.innerHTML = 'Chấm bài';
+}
+
+function renderResults() {
+  const list = document.getElementById('comments-list');
+  if (comments.length === 0) {
+    list.innerHTML = '<div class="card" style="text-align:center;color:#16a34a;font-weight:600;">Bài không có lỗi nào 🎉</div>';
+    updateStats();
+    return;
+  }
+  list.innerHTML = comments.map((c, i) => buildCard(c, i)).join('');
+  updateStats();
+}
+
+function buildCard(c, i) {
+  const approved = c.status === 'approved';
+  const editing = c.status === 'editing';
+  return `
+  <div class="comment-card ${approved ? 'approved' : ''}" id="card-${i}">
+    <div class="card-header">
+      <span class="badge-sentence">Câu ${c.sentence_number}</span>
+      <span class="badge-error">${c.error_name}</span>
+      <span class="status-dot ${approved ? 'approved' : ''}"></span>
+    </div>
+    <div class="error-text">"${escHtml(c.error_text)}"</div>
+    ${editing ? `
+      <textarea class="edit-area" id="edit-${i}">${escHtml(c.comment)}</textarea>
+      <div class="edit-actions">
+        <button class="btn-save" onclick="saveEdit(${i})">Lưu & Approve</button>
+        <button class="btn-cancel" onclick="cancelEdit(${i})">Huỷ</button>
+      </div>
+    ` : `
+      <div class="comment-text">${renderMd(c.comment)}</div>
+      <div class="card-actions">
+        <button class="btn-approve ${approved ? 'approved' : ''}" onclick="approve(${i})">
+          ${approved ? '✓ Đã Approve' : 'Approve'}
+        </button>
+        <button class="btn-edit" onclick="startEdit(${i})">Sửa</button>
+      </div>
+    `}
+  </div>`;
+}
+
+function approve(i) {
+  comments[i].status = comments[i].status === 'approved' ? 'pending' : 'approved';
+  rerenderCard(i);
+  updateStats();
+}
+
+function startEdit(i) {
+  comments[i].status = 'editing';
+  rerenderCard(i);
+}
+
+function saveEdit(i) {
+  const val = document.getElementById('edit-' + i).value.trim();
+  if (val) comments[i].comment = val;
+  comments[i].status = 'approved';
+  rerenderCard(i);
+  updateStats();
+}
+
+function cancelEdit(i) {
+  comments[i].status = comments[i].status === 'editing' ? 'pending' : comments[i].status;
+  rerenderCard(i);
+}
+
+function rerenderCard(i) {
+  document.getElementById('card-' + i).outerHTML = buildCard(comments[i], i);
+}
+
+function updateStats() {
+  const approved = comments.filter(c => c.status === 'approved').length;
+  document.getElementById('stat-total').textContent = 'Tổng: ' + comments.length + ' lỗi';
+  document.getElementById('stat-approved').textContent = 'Đã approve: ' + approved;
+  document.getElementById('btn-copy').disabled = approved === 0;
+}
+
+function copyApproved() {
+  const approved = comments.filter(c => c.status === 'approved');
+  if (!approved.length) return;
+  const text = approved.map(c => 'Câu ' + c.sentence_number + ' [' + c.error_name + ']\n' + c.comment).join('\n\n');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('btn-copy');
+      btn.textContent = 'Đã copy!';
+      setTimeout(() => btn.textContent = 'Copy đã Approve', 2000);
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+}
+
+function renderMd(text) {
+  return escHtml(text).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('error-msg').style.display = 'none';
+}
+</script>
+</body>
+</html>

@@ -38,13 +38,15 @@ const WEEK_DATA = {
 };
 
 function buildSystemPrompt(week) {
-  const w = WEEK_DATA[week] || WEEK_DATA[1];
-  return `Ban la giao vien tieng Anh tai IELTS Youpass, dang cham bai writing khoa Root tuan ${week}.
+  const w = WEEK_DATA[week];
+  const contextBlock = w
+    ? `DE BAI TUAN ${week}: ${w.de}\nFOCUS: ${w.focus}`
+    : `Bai writing chung cua khoa Root - tap trung tim TAT CA loi GR + LR co the co.`;
+  return `Ban la giao vien tieng Anh tai IELTS Youpass, dang cham bai writing khoa Root.
 
 NHIEM VU: Doc bai hoc sinh, tim loi GR (ngu phap) va LR (tu vung/collocation), tra ve JSON.
 
-DE BAI TUAN ${week}: ${w.de}
-FOCUS: ${w.focus}
+${contextBlock}
 
 ════ CACH DANH DAU LOI TRONG corrected_html ════
 
@@ -147,12 +149,11 @@ module.exports = async (req, res) => {
 
   const { week, essay, apiKey: bodyApiKey } = req.body || {};
 
-  if (!week || !essay || !String(essay).trim()) {
-    return res.status(400).json({ error: 'Thieu tuan hoc hoac bai viet.' });
+  if (!essay || !String(essay).trim()) {
+    return res.status(400).json({ error: 'Thieu bai viet.' });
   }
-  if (week < 1 || week > 9) {
-    return res.status(400).json({ error: 'Tuan phai tu 1 den 9.' });
-  }
+  // week is optional now — use generic prompt if missing
+  const weekNum = week ? Number(week) : 0;
 
   // Accept API key from request body (prototype mode) or env var (production)
   const apiKey = bodyApiKey || process.env.ANTHROPIC_API_KEY;
@@ -171,8 +172,8 @@ module.exports = async (req, res) => {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 8000,
-        system: buildSystemPrompt(Number(week)),
-        messages: [{ role: 'user', content: `Tuan ${week}. Bai hoc sinh:\n\n${String(essay).trim()}` }],
+        system: buildSystemPrompt(weekNum),
+        messages: [{ role: 'user', content: `Bai hoc sinh:\n\n${String(essay).trim()}` }],
       }),
     });
 
