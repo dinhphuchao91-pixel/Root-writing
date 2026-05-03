@@ -117,12 +117,33 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
 .cmt-num{margin-left:auto;font-size:11px;color:#9ca3af;font-weight:600;flex-shrink:0}
 .cmt-checkmark{color:#16a34a;font-weight:700;font-size:14px;flex-shrink:0}
 
-.cmt-body{padding:12px 14px}
-.cmt-text{font-size:13px;color:#374151;line-height:1.65}
+.cmt-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.cmt-text{font-size:13px;color:#374151;line-height:1.65;padding:6px 0}
 .cmt-text b{color:#1d4ed8;font-weight:700}
-.cmt-text-empty{color:#9ca3af;font-style:italic}
-.cmt-textarea{width:100%;padding:9px 11px;border:1.5px solid #93c5fd;border-radius:6px;font-size:13px;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;background:#fff;color:#1f2937}
-.cmt-textarea:focus{outline:none;border-color:#2563eb}
+.cmt-text-skipped{color:#9ca3af;font-style:italic;font-size:12.5px}
+.cmt-textarea{width:100%;padding:9px 11px;border:1.5px solid #d1d5db;border-radius:6px;font-size:13px;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;background:#fff;color:#1f2937;min-height:64px;transition:.15s}
+.cmt-textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.cmt-textarea::placeholder{color:#9ca3af;font-style:italic}
+
+/* AI hint */
+.ai-hint{display:flex;flex-direction:column;gap:6px}
+.btn-ai{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:5px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:.12s}
+.btn-ai:hover{background:#f3e8ff;border-color:#c084fc}
+.btn-ai .icon{font-size:13px}
+.ai-panel{background:#faf5ff;border:1px solid #e9d5ff;border-radius:6px;padding:9px 11px;font-size:12.5px;color:#581c87;line-height:1.6;display:none}
+.ai-panel.show{display:block}
+.ai-panel .ai-label{font-size:10.5px;font-weight:700;color:#7e22ce;letter-spacing:.04em;margin-bottom:4px}
+.ai-panel .ai-text{color:#4c1d95;margin-bottom:7px}
+.ai-panel .ai-text b{color:#6b21a8;font-weight:700}
+.ai-panel .ai-actions{display:flex;gap:6px}
+.btn-use-ai{padding:4px 10px;background:#7e22ce;color:#fff;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-use-ai:hover{background:#6b21a8}
+.btn-close-ai{padding:4px 10px;background:#fff;color:#7e22ce;border:1px solid #d8b4fe;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-close-ai:hover{background:#f3e8ff}
+
+/* Skipped state */
+.cmt.is-skipped{background:#fafafa;opacity:.78}
+.cmt.is-skipped .cmt-correction{opacity:.6}
 
 .cmt-actions{display:flex;gap:6px;padding:9px 14px;border-top:1px solid #f3f4f6;background:#fafbfc;align-items:center}
 .btn-sm{padding:5px 12px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;border:none;transition:.12s}
@@ -231,7 +252,7 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
       <span class="right-title">Nhận xét chi tiết</span>
       <div class="stat-group">
         <span class="stat stat-red" id="stat-total">0 lỗi</span>
-        <span class="stat stat-green" id="stat-approved">0 duyệt</span>
+        <span class="stat stat-green" id="stat-approved">0 nhận xét</span>
       </div>
     </div>
 
@@ -240,7 +261,7 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
     </div>
 
     <div class="right-foot">
-      <button class="btn-approve-all" id="btn-approve-all" onclick="approveAll()" disabled>✓ Duyệt tất cả</button>
+      <button class="btn-approve-all" id="btn-approve-all" onclick="useAiForAll()" disabled>💡 Dùng comment AI cho ô trống</button>
       <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
     </div>
   </div>
@@ -340,7 +361,14 @@ async function gradeEssay(){
     errors=parseErrors(data.errors||[],correctedHtml);
     cardStates={};
     errors.forEach(e=>{
-      cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
+      cardStates[e.id]={
+        text:'',                    // GV's comment (empty by default)
+        aiText:e.ai_comment||'',    // AI suggestion (kept separate, only shown on demand)
+        saved:false,                // GV pressed Save
+        skipped:false,              // GV pressed "Bỏ qua"
+        deleted:false,              // GV removed entirely
+        showAi:false,               // AI panel currently visible
+      };
     });
     activeId=null;
     showResult(name,week,correctedHtml);
@@ -416,23 +444,24 @@ function renderCards(){
 }
 
 function buildCard(err,index){
-  const st=cardStates[err.id]||{text:'',approved:false,editing:false};
+  const st=cardStates[err.id];
   const isGr=err.type==='grammar';
   const isActive=err.id===activeId;
+  const hasText=st.text && st.text.trim();
 
   const card=document.createElement('div');
   card.className='cmt';
   card.id='card-'+err.id;
   if(isActive) card.classList.add('is-active');
-  if(st.approved && !st.editing) card.classList.add('is-approved');
-  if(st.editing) card.classList.add('is-editing');
+  if(st.saved && hasText) card.classList.add('is-approved');
+  if(st.saved && !hasText || st.skipped) card.classList.add('is-skipped');
   card.addEventListener('click',()=>selectError(err.id));
 
   // ── HEAD ──
   const head=document.createElement('div');
   head.className='cmt-head';
 
-  if(st.approved && !st.editing){
+  if(st.saved && hasText){
     const ck=document.createElement('span');
     ck.className='cmt-checkmark';
     ck.textContent='✓';
@@ -474,27 +503,82 @@ function buildCard(err,index){
   // ── BODY ──
   const body=document.createElement('div');
   body.className='cmt-body';
-  if(st.editing){
+
+  // SAVED state — readonly view
+  if(st.saved){
+    const txt=document.createElement('div');
+    txt.className='cmt-text';
+    if(hasText){
+      txt.innerHTML=renderBold(st.text);
+    } else {
+      const skip=document.createElement('span');
+      skip.className='cmt-text-skipped';
+      skip.textContent='— Bỏ qua, không nhận xét lỗi này —';
+      txt.appendChild(skip);
+    }
+    body.appendChild(txt);
+  } else {
+    // EDITING state — textarea + AI hint
     const ta=document.createElement('textarea');
     ta.className='cmt-textarea';
     ta.id='ta-'+err.id;
     ta.value=st.text;
+    ta.placeholder='Nhập nhận xét cho học sinh…';
     ta.addEventListener('click',e=>e.stopPropagation());
-    ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+    ta.addEventListener('input',()=>{
+      cardStates[err.id].text=ta.value;
+      ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';
+    });
     body.appendChild(ta);
-    setTimeout(()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},20);
-  } else {
-    const txt=document.createElement('div');
-    txt.className='cmt-text';
-    if(st.text && st.text.trim()){
-      txt.innerHTML=renderBold(st.text);
-    } else {
-      const empty=document.createElement('span');
-      empty.className='cmt-text-empty';
-      empty.textContent='Không có comment';
-      txt.appendChild(empty);
+    setTimeout(()=>{ta.style.height='auto';ta.style.height=Math.max(64,ta.scrollHeight)+'px';},10);
+
+    // AI hint section
+    if(st.aiText){
+      const hint=document.createElement('div');
+      hint.className='ai-hint';
+
+      const aiBtn=document.createElement('button');
+      aiBtn.className='btn-ai';
+      aiBtn.innerHTML='<span class="icon">💡</span>'+(st.showAi?'Ẩn gợi ý AI':'Tham khảo gợi ý AI');
+      aiBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        cardStates[err.id].showAi=!st.showAi;
+        renderCards();
+      });
+      hint.appendChild(aiBtn);
+
+      if(st.showAi){
+        const panel=document.createElement('div');
+        panel.className='ai-panel show';
+
+        const lbl=document.createElement('div');
+        lbl.className='ai-label';
+        lbl.textContent='💡 GỢI Ý CỦA AI';
+        panel.appendChild(lbl);
+
+        const aiTxt=document.createElement('div');
+        aiTxt.className='ai-text';
+        aiTxt.innerHTML=renderBold(st.aiText);
+        panel.appendChild(aiTxt);
+
+        const aiAct=document.createElement('div');
+        aiAct.className='ai-actions';
+        const useBtn=document.createElement('button');
+        useBtn.className='btn-use-ai';
+        useBtn.textContent='✓ Dùng comment này';
+        useBtn.addEventListener('click',e=>{
+          e.stopPropagation();
+          cardStates[err.id].text=st.aiText;
+          cardStates[err.id].showAi=false;
+          renderCards();
+        });
+        aiAct.appendChild(useBtn);
+        panel.appendChild(aiAct);
+
+        hint.appendChild(panel);
+      }
+      body.appendChild(hint);
     }
-    body.appendChild(txt);
   }
   card.appendChild(body);
 
@@ -502,16 +586,12 @@ function buildCard(err,index){
   const actions=document.createElement('div');
   actions.className='cmt-actions';
 
-  if(st.editing){
-    actions.appendChild(makeBtn('Huỷ','btn-cancel',e=>{e.stopPropagation();cancelEdit(err.id);}));
-    actions.appendChild(makeBtn('✓ Lưu & Duyệt','btn-save',e=>{e.stopPropagation();saveEdit(err.id);}));
-    actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
-  } else if(st.approved){
-    actions.appendChild(makeBtn('Sửa lại','btn-edit',e=>{e.stopPropagation();startEdit(err.id);}));
+  if(st.saved){
+    actions.appendChild(makeBtn('Sửa lại','btn-edit',e=>{e.stopPropagation();editAgain(err.id);}));
     actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
   } else {
-    actions.appendChild(makeBtn('Sửa','btn-edit',e=>{e.stopPropagation();startEdit(err.id);}));
-    actions.appendChild(makeBtn('✓ Duyệt','btn-approve',e=>{e.stopPropagation();approveCard(err.id);}));
+    actions.appendChild(makeBtn('✓ Lưu','btn-save',e=>{e.stopPropagation();saveCard(err.id);}));
+    actions.appendChild(makeBtn('Bỏ qua','btn-cancel',e=>{e.stopPropagation();skipCard(err.id);}));
     actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
   }
   card.appendChild(actions);
@@ -542,62 +622,72 @@ function selectError(id){
   if(card){card.classList.add('is-active');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
 }
 
-function approveCard(id){
-  cardStates[id].approved=true;
-  cardStates[id].editing=false;
+// Save: lock card with whatever's in textarea (text or empty)
+function saveCard(id){
+  const ta=document.getElementById('ta-'+id);
+  if(ta) cardStates[id].text=ta.value.trim();
+  cardStates[id].saved=true;
+  cardStates[id].skipped=false;
+  cardStates[id].showAi=false;
   const sp=document.querySelector('.essay-view span[id="'+id+'"]');
-  if(sp){sp.classList.add('is-approved');sp.classList.remove('is-active');}
+  if(sp){
+    if(cardStates[id].text) sp.classList.add('is-approved');
+    sp.classList.remove('is-active');
+  }
   if(activeId===id) activeId=null;
   updateStats();renderCards();
 }
 
-function startEdit(id){
-  Object.keys(cardStates).forEach(k=>{if(k!==id) cardStates[k].editing=false;});
-  cardStates[id].editing=true;
-  cardStates[id].approved=false;
+// Skip: save with empty text (mark as "không cần comment")
+function skipCard(id){
+  cardStates[id].text='';
+  cardStates[id].saved=true;
+  cardStates[id].skipped=true;
+  cardStates[id].showAi=false;
+  const sp=document.querySelector('.essay-view span[id="'+id+'"]');
+  if(sp) sp.classList.remove('is-active');
+  if(activeId===id) activeId=null;
+  updateStats();renderCards();
+}
+
+// Edit again: unlock
+function editAgain(id){
+  cardStates[id].saved=false;
+  cardStates[id].skipped=false;
   const sp=document.querySelector('.essay-view span[id="'+id+'"]');
   if(sp) sp.classList.remove('is-approved');
   updateStats();renderCards();selectError(id);
-}
-
-function saveEdit(id){
-  const ta=document.getElementById('ta-'+id);
-  if(ta) cardStates[id].text=ta.value.trim()||cardStates[id].text;
-  cardStates[id].editing=false;
-  approveCard(id);
-}
-
-function cancelEdit(id){
-  cardStates[id].editing=false;
-  renderCards();
+  setTimeout(()=>{const ta=document.getElementById('ta-'+id);if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}},30);
 }
 
 function deleteCard(id){
   cardStates[id].deleted=true;
-  cardStates[id].editing=false;
   const sp=document.querySelector('.essay-view span[id="'+id+'"]');
   if(sp){sp.classList.remove('is-approved','is-active');sp.classList.add('is-deleted');}
   if(activeId===id) activeId=null;
   updateStats();renderCards();
 }
 
-function approveAll(){
+// Apply AI comment to ALL unsaved cards
+function useAiForAll(){
+  let n=0;
   errors.forEach(e=>{
-    if(!cardStates[e.id].deleted && !cardStates[e.id].approved){
-      cardStates[e.id].approved=true;
-      cardStates[e.id].editing=false;
-      const sp=document.querySelector('.essay-view span[id="'+e.id+'"]');
-      if(sp) sp.classList.add('is-approved');
+    const st=cardStates[e.id];
+    if(!st.deleted && !st.saved && st.aiText && !st.text.trim()){
+      st.text=st.aiText;
+      n++;
     }
   });
-  activeId=null;
-  updateStats();renderCards();
+  if(n){updateStats();renderCards();}
 }
 
 function copyAll(){
-  const approved=errors.filter(e=>cardStates[e.id]?.approved && !cardStates[e.id]?.deleted);
-  if(!approved.length) return;
-  const parts=approved.map((e,i)=>{
+  const filled=errors.filter(e=>{
+    const st=cardStates[e.id];
+    return st && !st.deleted && st.saved && st.text && st.text.trim();
+  });
+  if(!filled.length) return;
+  const parts=filled.map(e=>{
     const tag=e.type==='grammar'?'GR':'LR';
     const corr=(e.wrong||'')+(e.wrong&&e.right?' → ':'')+(e.right||'');
     return `[${tag}] ${corr}\n${cardStates[e.id].text}`;
@@ -605,18 +695,26 @@ function copyAll(){
   navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
     const b=$('#btn-copy-all');
     const orig=b.textContent;
-    b.textContent='✓ Đã copy '+approved.length+' nhận xét!';
+    b.textContent='✓ Đã copy '+filled.length+' nhận xét!';
     setTimeout(()=>b.textContent=orig,2200);
   });
 }
 
 function updateStats(){
   const total=errors.filter(e=>!cardStates[e.id]?.deleted).length;
-  const approved=errors.filter(e=>cardStates[e.id]?.approved && !cardStates[e.id]?.deleted).length;
+  const filled=errors.filter(e=>{
+    const st=cardStates[e.id];
+    return st && !st.deleted && st.saved && st.text && st.text.trim();
+  }).length;
   $('#stat-total').textContent=total+' lỗi';
-  $('#stat-approved').textContent=approved+' duyệt';
-  $('#btn-copy-all').disabled=approved===0;
-  $('#btn-approve-all').disabled=approved>=total||total===0;
+  $('#stat-approved').textContent=filled+' nhận xét';
+  $('#btn-copy-all').disabled=filled===0;
+  // Enable "Dùng AI" if any unsaved + empty card has aiText
+  const hasUnsavedEmpty=errors.some(e=>{
+    const st=cardStates[e.id];
+    return st && !st.deleted && !st.saved && st.aiText && !st.text.trim();
+  });
+  $('#btn-approve-all').disabled=!hasUnsavedEmpty;
 }
 
 function resetAll(){
@@ -633,7 +731,7 @@ function resetAll(){
   $('#result-view').style.display='none';
   $('#cards-area').innerHTML='<div class="cards-empty">Nhập API key + bài viết<br>rồi nhấn "Chấm bài" để xem nhận xét</div>';
   $('#stat-total').textContent='0 lỗi';
-  $('#stat-approved').textContent='0 duyệt';
+  $('#stat-approved').textContent='0 nhận xét';
   $('#btn-copy-all').disabled=true;
   $('#btn-approve-all').disabled=true;
   checkGradeBtn();
