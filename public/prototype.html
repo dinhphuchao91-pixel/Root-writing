@@ -28,7 +28,10 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
 /* ───── Left panel ───── */
 .left{padding:24px 28px;overflow-y:auto;border-right:1px solid #e5e7eb;background:#fff}
 .panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px;margin-bottom:14px}
-.panel h2{font-size:14px;font-weight:700;color:#111827;margin-bottom:14px;letter-spacing:-.01em}
+.panel h2{font-size:14px;font-weight:700;color:#111827;letter-spacing:-.01em}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.btn-demo{padding:5px 11px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.12s}
+.btn-demo:hover{background:#fde68a;border-color:#facc15}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:12px;font-weight:600;color:#374151}
@@ -190,7 +193,10 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
     <!-- INPUT FORM -->
     <div id="input-view">
       <div class="panel">
-        <h2>Bài làm của học sinh</h2>
+        <div class="panel-head">
+          <h2>Bài làm của học sinh</h2>
+          <button class="btn-demo" onclick="loadDemo()" title="Tải bài demo để test nhanh">📄 Bài demo</button>
+        </div>
         <div class="field">
           <textarea id="essay" placeholder="Paste bài viết của học sinh vào đây..." oninput="onEssayInput()"></textarea>
           <div class="word-count low" id="word-count">0 từ</div>
@@ -276,6 +282,20 @@ function saveKey(){
   if(k){$('#api-key').value=k;$('#key-saved').classList.add('show');setTimeout(()=>$('#key-saved').classList.remove('show'),1500);}
 })();
 $('#api-key').addEventListener('input',checkGradeBtn);
+
+// ════ Demo essay (mix lỗi từ nhiều tuần để test prompt) ════
+const DEMO_ESSAY = `1. I cancel my business trip to Ha Noi because I have a problem with new project. I just book another flight next Monday.
+2. My flight will take off at 4 p.m today. I prepared for carefully. Since I arrived, I will visit my friend house.
+3. During ceremony, street in TPHCM are quiet because everybody will go to their hometown. And when ceremony ends, street return crowded and congestion everywhere.
+4. She considering to moving to TPHCM to have more job oppotunities and get access to good education in the future.
+5. The authorities encourage people work in an tourism industry to grow the economy local. However, a lot of people disinterest with this job because these day it not to find a good job in an tourism industry.`;
+
+function loadDemo(){
+  const ta=$('#essay');
+  ta.value=DEMO_ESSAY;
+  onEssayInput();
+  ta.focus();
+}
 
 // ════ Form helpers ════
 function onEssayInput(){
