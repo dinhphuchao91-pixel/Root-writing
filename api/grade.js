@@ -61,37 +61,90 @@ LOI CAN TIM (chinh):
 - Word form sai (vd: "harm effects" → "harmful effects")
 - Loi chinh ta
 
-CACH DANH DAU LOI (corrected_html):
-- Copy NGUYEN bai, chen span HTML tai vi tri loi.
-- Dung dau nhay DON trong attributes.
-- Chi danh dau phan SAI NHO NHAT (KHONG ca tu neu chi can sua 1 phan).
-- Format:
-  • Them: exist<span id='N' class='TYPE'><s></s><mark>them</mark></span>ing
-  • Xoa:  exist<span id='N' class='TYPE'><s>xoa</s><mark></mark></span>ing
-  • Doi:  <span id='N' class='TYPE'><s>sai</s><mark>dung</mark></span>
-- TYPE = 'grammar' hoac 'vocabulary'. Xuong dong: \\n.
+═══ CACH DANH DAU LOI (corrected_html) ═══
 
-Vi du:
-- harm→harms:    harm<span id='1' class='grammar'><s></s><mark>s</mark></span>
-- at→in:         <span id='2' class='grammar'><s>at</s><mark>in</mark></span>
-- bo "about" sau discuss: discuss<span id='3' class='grammar'><s> about</s><mark></mark></span> his
-- bo "money": <span id='4' class='vocabulary'><s>money </s><mark></mark></span>savings
-- them "a":   <span id='5' class='grammar'><s></s><mark>a </mark></span>high score
+NGUYEN TAC TOI THUONG (BAT BUOC):
+Chi danh dau PHAN KHAC BIET NHO NHAT giua sai va dung.
+TUYET DOI KHONG gach het tu/cum khi chi can sua 1-2 chu.
 
-LOI CHINH TA - DANH DAU GRANULAR (CUC KY QUAN TRONG):
-- Thieu chu cai → CHI them chu cai bi thieu (KHONG gach het tu):
-  • "interst" thieu 'e' → inter<span id='1' class='vocabulary'><s></s><mark>e</mark></span>st
-  • "oppotunities" thieu 'r' → oppo<span id='2' class='vocabulary'><s></s><mark>r</mark></span>tunities
-  • "enviroment" thieu 'n' → envi<span id='3' class='vocabulary'><s></s><mark>n</mark></span>ronment
-- Thua chu cai → CHI gach chu cai thua:
-  • "tomorrowww" → tomorrow<span id='4' class='vocabulary'><s>ww</s><mark></mark></span>
-  • "begining" thua/thieu 'n' → begin<span id='5' class='vocabulary'><s></s><mark>n</mark></span>ing
-- Sai vi tri 1-2 chu → chi sua doan sai:
-  • "recieve" → rec<span id='6' class='vocabulary'><s>ie</s><mark>ei</mark></span>ve
-  • "anothre" → ano<span id='7' class='vocabulary'><s>re</s><mark>er</mark></span> (anothre→another)
-- Sai chinh ta nhieu/khong nhan ra → MOI gach het tu va viet lai:
-  • "thrue" → <span id='8' class='vocabulary'><s>thrue</s><mark>true</mark></span>
-  • "behviour" sai 2 cho → <span id='9' class='vocabulary'><s>behviour</s><mark>behaviour</mark></span>
+QUY TRINH:
+1. Tim phan giong nhau o DAU 2 tu (sai vs dung) → giu nguyen
+2. Tim phan giong nhau o CUOI 2 tu → giu nguyen
+3. Chi gach + sua phan O GIUA bi khac
+
+VI DU CHI TIET (HOC THUOC):
+
+▸ Them suffix/duoi tu:
+  cancel→cancelled: cancel<span id='1' class='grammar'><s></s><mark>led</mark></span>  ✓
+  KHONG: <span><s>cancel</s><mark>cancelled</mark></span>  ✗ (gach het, sai!)
+
+  book→booked: book<span id='2' class='grammar'><s></s><mark>ed</mark></span>  ✓
+  KHONG: <span><s>book</s><mark>booked</mark></span>  ✗
+
+  consider→considering: consider<span id='3' class='grammar'><s></s><mark>ing</mark></span>  ✓
+
+  encourag→encouraging: encourag<span id='4' class='grammar'><s></s><mark>ing</mark></span>  ✓
+
+  street→streets: street<span id='5' class='grammar'><s></s><mark>s</mark></span>  ✓
+
+▸ Doi suffix/duoi:
+  have→had: ha<span id='6' class='grammar'><s>ve</s><mark>d</mark></span>  ✓
+  KHONG: <span><s>have</s><mark>had</mark></span>  ✗
+
+  go→goes: go<span id='7' class='grammar'><s></s><mark>es</mark></span>  ✓
+
+  arrive→arrived: arrive<span id='8' class='grammar'><s></s><mark>d</mark></span>  ✓ (khi can QKD)
+  arrived→arrive: arrive<span id='9' class='grammar'><s>d</s><mark></mark></span>  ✓ (khi can hien tai)
+
+  prepared→have prepared: <span id='10' class='grammar'><s></s><mark>have </mark></span>prepared  ✓
+  KHONG: <span><s>prepared</s><mark>have prepared</mark></span>  ✗
+
+▸ Them tu o truoc/sau (KHONG dung den tu hien co):
+  new→a new: <span id='11' class='grammar'><s></s><mark>a </mark></span>new  ✓
+  KHONG: <span><s>new</s><mark>a new</mark></span>  ✗
+
+  next Monday→for next Monday: <span id='12' class='grammar'><s></s><mark>for </mark></span>next  ✓
+
+  considering moving→considering to moving: KHONG, day la SAI - "consider+V-ing" khong "to"
+  → considering <span id='13' class='grammar'><s>to </s><mark></mark></span>moving  ✓ (chi xoa "to ")
+
+  ceremony→the ceremony: <span id='14' class='grammar'><s></s><mark>the </mark></span>ceremony  ✓
+  KHONG: <span><s>ceremony</s><mark>the ceremony</mark></span>  ✗
+
+▸ Bo tu thua:
+  discuss about→discuss: discuss<span id='15' class='grammar'><s> about</s><mark></mark></span>  ✓
+  money savings→savings: <span id='16' class='vocabulary'><s>money </s><mark></mark></span>savings  ✓
+  will go→go: <span id='17' class='grammar'><s>will </s><mark></mark></span>go  ✓
+
+▸ Doi 1-2 chu cai:
+  at→in: <span id='18' class='grammar'><s>at</s><mark>in</mark></span>  ✓
+  an→a: <span id='19' class='grammar'><s>n</s><mark></mark></span> (chi xoa 'n' khoi 'an')  ✓
+
+▸ Doi cum 2-3 tu (cau truc khac han):
+  not to find→is not easy to find: <span id='20' class='grammar'><s>not to find</s><mark>is not easy to find</mark></span>  ✓
+  these day→these days: these day<span id='21' class='vocabulary'><s></s><mark>s</mark></span>  ✓
+  KHONG: <span><s>these day</s><mark>these days</mark></span>  ✗ (chi them 's' thoi)
+
+═══ LOI CHINH TA (granular) ═══
+- Thieu chu cai → CHI them chu thieu:
+  interst→interest: inter<span id='30' class='vocabulary'><s></s><mark>e</mark></span>st  ✓
+  oppotunities→opportunities: oppo<span id='31' class='vocabulary'><s></s><mark>r</mark></span>tunities  ✓
+  enviroment→environment: envi<span id='32' class='vocabulary'><s></s><mark>n</mark></span>ronment  ✓
+- Thua chu cai → CHI gach chu thua:
+  tomorrowww→tomorrow: tomorrow<span id='33' class='vocabulary'><s>ww</s><mark></mark></span>  ✓
+- Sai 1-2 chu → chi sua doan ngan:
+  recieve→receive: rec<span id='34' class='vocabulary'><s>ie</s><mark>ei</mark></span>ve  ✓
+  anothre→another: ano<span id='35' class='vocabulary'><s>re</s><mark>er</mark></span>  ✓
+- Sai khong nhan ra duoc → moi gach het + viet lai:
+  thrue→true: <span id='36' class='vocabulary'><s>thrue</s><mark>true</mark></span>  ✓
+
+═══ TRUOC KHI VIET span, TU HOI: ═══
+"Phan giong nhau giua tu sai va tu dung la gi? Co the giu nguyen khong?"
+NEU phan giong > 50% → BAT BUOC chi sua phan khac
+NEU sai chinh ta nang khong nhan ra → moi gach het
+
+TYPE = 'grammar' (loi ngu phap) hoac 'vocabulary' (LR/chinh ta).
+Xuong dong giua cac cau: \\n.
 
 CACH VIET AI COMMENT (giong giao vien Root):
 - Giai thich theo NGU CANH cu the cua bai - KHONG noi "theo quy tac".
