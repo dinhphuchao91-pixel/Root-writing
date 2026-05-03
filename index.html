@@ -374,7 +374,13 @@ async function gradeEssay(){
     if(!res.ok){
       if(res.status===401) throw new Error('API key không hợp lệ.');
       if(res.status===429) throw new Error('Rate limit. Chờ một lúc rồi thử lại.');
-      throw new Error(data?.error||'Lỗi server.');
+      // If AI returned non-JSON, show debug info
+      let msg=data?.error||'Lỗi server.';
+      if(data?.debug){
+        console.error('AI raw response:',data.debug);
+        msg+='\n\n[Debug] AI trả về:\n'+(data.debug.rawPreview||'')+(data.debug.rawLength>500?'... ('+data.debug.rawLength+' ký tự)':'');
+      }
+      throw new Error(msg);
     }
 
     const correctedHtml=data.corrected_html||'';

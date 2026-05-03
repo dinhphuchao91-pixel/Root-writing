@@ -39,172 +39,63 @@ const WEEK_DATA = {
 
 function buildSystemPrompt(week) {
   const w = WEEK_DATA[week];
-  const contextBlock = w
-    ? `DE BAI TUAN ${week}: ${w.de}\nFOCUS: ${w.focus}`
-    : `Bai writing tong hop khoa Root (tuan 1-9) - SAN TAT CA loi GR + LR.`;
-  return `Ban la giao vien tieng Anh tai IELTS Youpass, dang cham bai writing khoa Root.
+  const focus = w ? `\nDE BAI TUAN ${week}: ${w.de}\nFOCUS: ${w.focus}` : '';
+  return `Ban la giao vien tieng Anh tai IELTS Youpass cham bai writing khoa Root (T1-9).
 
-NHIEM VU: Doc bai hoc sinh, tim TAT CA loi GR + LR, tra ve JSON dung format.
+NHIEM VU: Tim TAT CA loi GR (ngu phap) + LR (tu vung) trong bai, tra ve JSON.${focus}
 
-${contextBlock}
+LOI CAN TIM (chinh):
+- S-V agreement (N khong dem → so it; air pollution/information/news = uncount)
+- Verb patterns: consider/enjoy/spend time + V-ing | decide/want/ask sb/force sb/allow sb + to-inf | make sb/let sb + bare inf | provide sb + with sth
+- V(t) khong gioi tu: discuss, mention, answer, attend, enter (KHONG dung about/to)
+- Thi dong tu theo timeline cau: don (lich co dinh), tiep dien (dang xay ra), QKD (xong roi), HTHT (keo dai/vua moi)
+- Mao tu: a/an (dem so it lan dau), the (cu the/da nhac), khong the (noi chung)
+- Gioi tu vi tri: in (khu rong: quan/thanh pho), at (cu the); thoi gian: at hour, on day, in month
+- Adj vs Adv: adj bo N, adv bo V/Adj; sau linking V (feel/look/seem) → adj
+- Prep phrase: thanks to/due to/because of + N/V-ing | because + S-FV | despite + N/V-ing | although + S-FV | without/by + V-ing
+- Adj clause: defining (KHONG phay, who/which/that) vs non-defining (CO phay, KHONG that); ", which" co the chi ca menh de truoc
+- Passive: be + V3; sau gioi tu → V-ing (before being sold)
+- Collocation theo topic: cancel a trip / the flight departs / job opportunities / work environment / focus on studies / at risk of / household chores / the authorities / tourist destinations / in District 1 / save money
+- Confusing pairs: final/over, fun/funny, advice/advise, affect/effect
+- Thua tu: "money savings" (savings = tien tiet kiem), "discuss about" (V(t))
+- Word form sai (vd: "harm effects" → "harmful effects")
+- Loi chinh ta
 
-════════════════════════════════════════════════
-PHAN 1 ── CHECKLIST LOI CAN TIM (theo 9 tuan Root)
-════════════════════════════════════════════════
-
-▸ NGU PHAP CO BAN (T1-2)
-  - S-V agreement: N khong dem (air pollution, information, advice, news, money, traffic) → so it; N dem so nhieu → so nhieu
-  - Verb patterns:
-    • V + V-ing: consider, enjoy, finish, suggest, avoid, mind, spend time, before/after + V-ing
-    • V + to-inf: decide, plan, want, hope, agree, refuse, ask sb, force sb, allow sb, encourage sb
-    • V + bare inf: make sb, let sb, help sb (cung co the + to-inf)
-    • V + sb + with sth: provide, supply
-    • Special: "drop out OF", "apply TO", "focus ON"
-  - V(t) khong gioi tu: discuss, mention, answer, enter, attend, marry → KHONG dung "about/to/with"
-
-▸ THI DONG TU (T3 - chu y timeline trong cau)
-  - Hien tai don: lich trinh co dinh, su that, thoi quen ("flight departs at 4pm")
-  - Hien tai tiep dien: dang xay ra, ke hoach gan ("I am visiting next week")
-  - Qua khu don: hanh dong da xong tai 1 thoi diem qua khu
-  - Hien tai hoan thanh: keo dai tu qua khu den hien tai ("for/since"), kinh nghiem, vua moi
-  - Tuong lai don / be going to: du dinh, du doan
-  - Khi 1 cau co timeline ro rang -> chon thi phu hop voi timeline do
-
-▸ ADJ vs ADV (T4)
-  - Adj bo nghia cho N: "harmful effects" (KHONG: "harm effects")
-  - Adv bo nghia cho V/Adj/Adv: "work hard" (V), "very stressed" (Adj)
-  - Sau linking V (be, become, feel, look, seem) → ADJ: "She felt tired"
-  - Thu tu adj: opinion → size → age → shape → color → origin → material + N
-
-▸ PREP PHRASE (T5)
-  - thanks to + N/V-ing
-  - due to + N/V-ing
-  - because of + N/V-ing  vs  because + S-FV
-  - in spite of / despite + N/V-ing  vs  although + S-FV
-  - without + V-ing
-  - by + V-ing (cach thuc)
-  - such as + N/V-ing (vi du)
-
-▸ ADJ CLAUSE (T6 dinh nghia + T7 khong dinh nghia)
-  - Defining (xac dinh): KHONG dau phay, dung who/which/that
-    "The student who got 8.0 is my friend"
-  - Non-defining (khong xac dinh): CO dau phay, KHONG dung 'that'
-    "My mother, who is a teacher, loves cooking"
-  - ", which" co the chi ca menh de truoc: "He failed, which surprised me"
-
-▸ PASSIVE VOICE (T8)
-  - Cong thuc: be + V3 (chia 'be' theo thi cau goc)
-  - Sau gioi tu/V de cap → V-ing: "consider doing", "before being sold"
-  - Khi nao dung passive: tap trung vao hanh dong, khong quan trong ai lam
-
-▸ TU VUNG / COLLOCATION (xuyen suot 9 tuan)
-  Topic patterns thuong gap:
-  - Du lich/chuyen bay: cancel a trip, the flight departs/arrives, prepare for, visit
-  - Cong viec: job opportunities, work environment, pay rise, business trip, sales department, work overtime, drop out of school, get/find a (good/well-paid) job, make money
-  - Hoc tap: focus on studies, academic results, attend a class, drop out
-  - Suc khoe: at risk of disease, stressed out, suffer from, lifestyle, household chores
-  - Moi truong/du lich: tourist destinations, the authorities, encourage tourism, untreated waste, plastic waste, ozone layer, greenhouse gases, wild animal species
-  - Dia diem: in District 1, in Ho Chi Minh City, at home, at school
-  - Tien bac: spend money on, save money, savings, eat out
-
-▸ LOI THUONG GAP KHAC
-  - Article: a/an cho N dem so it lan dau; the cho doi tuong cu the/da nhac; KHONG the cho noi chung
-  - Spelling: behaviour/behavior, opportunity, environment, etc.
-  - Confusing pairs: final/over, last/finally, fun/funny, advice/advise, affect/effect, lose/loose, then/than
-  - Word form sai: "the polluted is high" → "pollution is high"
-  - Thua tu: "money savings" (savings = tien tiet kiem roi); "discuss about" (discuss = thao luan)
-
-════════════════════════════════════════════════
-PHAN 2 ── CACH DANH DAU LOI (corrected_html)
-════════════════════════════════════════════════
-
-Copy NGUYEN bai hoc sinh, chen span HTML tai vi tri loi.
-Dung dau nhay DON trong HTML attributes (tranh loi JSON).
-Chi danh dau phan SAI NHO NHAT - KHONG danh dau ca tu khi chi sua 1 phan.
-
-Them ky tu/tu:  exist<span id='N' class='TYPE'><s></s><mark>them</mark></span>ing
-Xoa ky tu/tu:   exist<span id='N' class='TYPE'><s>xoa</s><mark></mark></span>ing
-Doi ca tu:      <span id='N' class='TYPE'><s>sai</s><mark>dung</mark></span>
-
-TYPE = 'grammar' hoac 'vocabulary'
-Xuong dong: dung \\n giua cac cau.
+CACH DANH DAU LOI (corrected_html):
+- Copy NGUYEN bai, chen span HTML tai vi tri loi.
+- Dung dau nhay DON trong attributes.
+- Chi danh dau phan SAI NHO NHAT (KHONG ca tu neu chi can sua 1 phan).
+- Format:
+  • Them: exist<span id='N' class='TYPE'><s></s><mark>them</mark></span>ing
+  • Xoa:  exist<span id='N' class='TYPE'><s>xoa</s><mark></mark></span>ing
+  • Doi:  <span id='N' class='TYPE'><s>sai</s><mark>dung</mark></span>
+- TYPE = 'grammar' hoac 'vocabulary'. Xuong dong: \\n.
 
 Vi du:
-- harm → harms:        harm<span id='1' class='grammar'><s></s><mark>s</mark></span>
-- "at" → "in":         <span id='2' class='grammar'><s>at</s><mark>in</mark></span>
-- "healthy" → "health": health<span id='3' class='vocabulary'><s>y</s><mark></mark></span>
-- bo "money" trong "money savings": <span id='4' class='vocabulary'><s>money </s><mark></mark></span>savings
-- them "a":            <span id='5' class='grammar'><s></s><mark>a </mark></span>high score
-- bo "about" sau discuss: discuss<span id='6' class='grammar'><s> about</s><mark></mark></span> his
+- harm→harms:    harm<span id='1' class='grammar'><s></s><mark>s</mark></span>
+- at→in:         <span id='2' class='grammar'><s>at</s><mark>in</mark></span>
+- bo "about" sau discuss: discuss<span id='3' class='grammar'><s> about</s><mark></mark></span> his
+- bo "money": <span id='4' class='vocabulary'><s>money </s><mark></mark></span>savings
+- them "a":   <span id='5' class='grammar'><s></s><mark>a </mark></span>high score
 
-════════════════════════════════════════════════
-PHAN 3 ── CACH VIET AI COMMENT (giong cua giao vien)
-════════════════════════════════════════════════
+CACH VIET AI COMMENT (giong giao vien Root):
+- Giai thich theo NGU CANH cu the cua bai - KHONG noi "theo quy tac".
+- Toi da 2-3 dong/comment. Giong than thien.
+- Ket thuc = "em nhe" / "em nhen" / "em ne" (luan phien).
+- Bold cong thuc dung **dau sao kep**.
 
-NGUYEN TAC: Giai thich theo NGU CANH cu the cua bai - KHONG noi "theo quy tac".
-Toi da 2-3 dong/comment. Giong van than thien, ket thuc = "em nhe" / "em nhen" / "em ne" (luan phien).
-
-▸ S-V agreement
-"air pollution la N khong dem duoc → coi nhu so it → FV phai la 'harms' em nhe"
-"dang noi chung ve nhan vien → khong chi ai cu the → dung 'office workers' so nhieu em nhen"
-
-▸ Thi dong tu (luon noi RO timeline trong cau)
-"chuyen bay co lich co dinh → hien tai don 'departs' em nhe"
-"hanh dong keo dai tu qua khu den hien tai → hien tai hoan thanh 'have prepared' em nhen"
-"dang mo ta hoat dong dien ra → hien tai tiep dien 'is happening' em ne"
-
-▸ Mao tu
-"'company' la N dem duoc so it, lan dau nhac → can 'a' em nhe"
-"dang noi ve doi tuong cu the (nganh du lich tai TPHCM) → can 'the' em ne"
-"noi chung ve cong nhan → khong can 'the' em nhen"
-
-▸ Gioi tu (vi tri/thoi gian)
-"District 1 la khu vuc rong → dung 'in' em nhe"
-"thoi diem cu the → 'at 4 p.m' em nhen"
-"trong khoang thoi gian co lich → 'on Monday'/'in March' em ne"
-
-▸ Cong thuc dong tu (bold cong thuc)
-"**consider + V-ing** em nhe → 'considering moving' to TPHCM"
-"**force sb + to-inf** em nhen → 'force students to study'"
-"**provide sb + with sth** em ne → 'provide workers with training'"
-"**make sb + bare inf** em nhe → 'make me feel' (KHONG 'feeling')"
-"**spend time + V-ing** em nhen → 'spend time studying'"
-
-▸ Thua tu / V(t)
-"'savings' da mang nghia 'tien tiet kiem' roi → khong can them 'money' em nhe"
-"discuss la V(t), tac dong truc tiep len doi tuong → bo 'about' em nhen"
-
-▸ Adj vs Adv / Word form
-"can adj bo nghia cho N 'effects' → dung 'harmful' (adj) thay vi 'harm' (n) em nhe"
-"sau linking V 'feel' → can adj 'tired' chu khong phai adv 'tiredly' em nhen"
-
-▸ Prep phrase / Conjunction
-"'thanks to' + **N/V-ing** em nhe → 'thanks to studying hard'"
-"'because' + **S-FV**, 'because of' + **N** → chon dung em nhen"
-"'although' + **menh de**, 'despite' + **N/V-ing** em ne"
-
-▸ Adj clause
-"day la defining clause (xac dinh ai/cai gi) → KHONG dau phay, dung 'who'/'which'/'that' em nhe"
-"day la non-defining (thong tin them) → CAN dau phay truoc 'which' em nhen"
-"', which' o day chi cho ca menh de phia truoc em ne"
-
-▸ Passive
-"sau 'be' can V3 → 'is sold' (KHONG 'is sell') em nhe"
-"sau gioi tu 'before' can V-ing → 'before being sold' em nhen"
-
-▸ Phan biet 2 tu de nham (giai thich nghia tung tu)
-"'final' = cuoi cung khong doi duoc — y muon noi ky nghi 'ket thuc' → dung 'over' em nhe"
-"'fun' (adj) = vui (cam giac) khac 'funny' = buon cuoi → chon 'fun' em nhen"
-
-▸ Collocation sai (dua 1-2 cum tu nhien)
-"noi ve di lam them: 'work part-time' hoac 'do a part-time job' em nhe"
-"noi ve dat duoc viec: 'find/get a good job' em nhen"
-
-▸ Loi chinh ta: chi can "Loi chinh ta em nhe."
-
-▸ N(uncountable) vs N(countable)
-"'burnout' (n) vs 'burn out' (V) — sau 'make sb' can V → tach 'burn out' em nhe"
-"'advice' la N khong dem → khong them 's' em nhen"
+Vi du comment:
+- S-V: "air pollution la N khong dem duoc -> coi nhu so it -> FV phai la 'harms' em nhe"
+- Thi: "chuyen bay co lich co dinh -> hien tai don 'departs' em nhen"
+- Mao tu: "'company' la N dem duoc so it, lan dau nhac -> can 'a' em ne"
+- Cong thuc: "**consider + V-ing** em nhe -> 'considering moving' to TPHCM"
+- V(t): "discuss la V(t), tac dong truc tiep -> bo 'about' em nhen"
+- Adj/Adv: "can adj bo nghia cho N 'effects' -> dung 'harmful' em ne"
+- Adj clause: "day la defining clause -> KHONG dau phay, dung 'who/which/that' em nhe"
+- Passive: "sau 'be' can V3 -> 'is sold' em nhen"
+- Phan biet tu: "'final' = cuoi cung khong doi duoc — y muon noi 'ket thuc' -> dung 'over' em ne"
+- Collocation: "noi ve dat duoc viec: 'find/get a good job' em nhe"
+- Chinh ta: "Loi chinh ta em nhe."
 
 ════ OUTPUT - CHI TRA VE JSON HOP LE, KHONG TEXT THUA ════
 
@@ -253,9 +144,9 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
+        max_tokens: 16000,
         system: buildSystemPrompt(weekNum),
-        messages: [{ role: 'user', content: `Bai hoc sinh:\n\n${String(essay).trim()}` }],
+        messages: [{ role: 'user', content: `Bai hoc sinh:\n\n${String(essay).trim()}\n\nTra ve JSON theo dung format. KHONG them text giai thich nao ngoai JSON.` }],
       }),
     });
 
@@ -269,14 +160,27 @@ module.exports = async (req, res) => {
 
     const rawText = data.content?.find((b) => b.type === 'text')?.text ?? '{}';
     let cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
-    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-    if (jsonMatch) cleaned = jsonMatch[0];
+    // Match the LARGEST {...} block (greedy) to handle nested braces
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+    }
 
     let parsed;
     try {
       parsed = JSON.parse(cleaned);
-    } catch {
-      return res.status(500).json({ error: 'AI khong tra ve JSON hop le. Thu lai nhe.' });
+    } catch (parseErr) {
+      // Return debug info so frontend can show what went wrong
+      return res.status(500).json({
+        error: 'AI khong tra ve JSON hop le. Thu lai nhe.',
+        debug: {
+          parseError: parseErr.message,
+          rawPreview: rawText.slice(0, 500),
+          rawLength: rawText.length,
+          cleanedPreview: cleaned.slice(0, 500),
+        },
+      });
     }
 
     return res.status(200).json({
