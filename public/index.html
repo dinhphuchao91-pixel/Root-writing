@@ -10,12 +10,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 
 /* ── Header ── */
 header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;color:#111827;text-decoration:none;cursor:pointer}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;color:#111827;cursor:pointer}
 .logo-icon{width:30px;height:30px;background:#16a34a;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
 .nav{display:flex;align-items:center;gap:8px}
 .btn-nav{background:none;border:none;color:#6b7280;font-size:.85rem;cursor:pointer;padding:6px 12px;border-radius:7px;font-family:inherit}
 .btn-nav:hover{background:#f3f4f6;color:#111827}
-.btn-primary{background:#111827;color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px}
+.btn-primary{background:#111827;color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-primary:hover{background:#1f2937}
 
 /* ── Screens ── */
@@ -42,8 +42,8 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:54p
 .chip-ok{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
 
 /* ── MARK SCREEN: 2-column ── */
-.mark-layout{display:grid;grid-template-columns:1fr 400px;height:calc(100vh - 54px)}
-@media(max-width:820px){.mark-layout{grid-template-columns:1fr;height:auto}}
+.mark-layout{display:grid;grid-template-columns:1fr 420px;height:calc(100vh - 54px)}
+@media(max-width:860px){.mark-layout{grid-template-columns:1fr;height:auto}}
 
 /* ── Left panel ── */
 .left-panel{padding:24px;border-right:1px solid #e5e7eb;overflow-y:auto;height:100%}
@@ -82,103 +82,154 @@ textarea{resize:vertical;min-height:150px;line-height:1.65}
 .reset-btn:hover{background:#f3f4f6}
 
 /* Legend */
-.legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;padding:10px 14px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6}
+.legend{display:flex;gap:16px;margin-bottom:14px;padding:9px 14px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#6b7280}
-.ld-gr-s{background:#fee2e2;color:#dc2626;text-decoration:line-through;padding:1px 5px;border-radius:3px;font-size:.73rem}
-.ld-gr-m{background:#dcfce7;color:#15803d;padding:1px 5px;border-radius:3px;font-size:.73rem;font-weight:600}
-.ld-voc-s{background:#fef3c7;color:#b45309;text-decoration:line-through;padding:1px 5px;border-radius:3px;font-size:.73rem}
-.ld-voc-m{background:#dbeafe;color:#1d4ed8;padding:1px 5px;border-radius:3px;font-size:.73rem;font-weight:600}
+.ld-gr{background:#fef08a;color:#78350f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
+.ld-voc{background:#86efac;color:#14532d;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
+.ld-check{color:#15803d;font-size:.72rem;font-weight:700}
 
-/* ── ESSAY RENDERED (Word-style inline corrections) ── */
-.essay-rendered{line-height:2;font-size:.92rem;color:#1f2937;white-space:pre-wrap;padding:4px 0}
+/* ── ESSAY RENDERED — CRM style ── */
+.essay-rendered{line-height:2.2;font-size:.93rem;color:#1f2937;white-space:pre-wrap;padding:4px 0}
 
-.essay-rendered span.grammar,
-.essay-rendered span.vocabulary{cursor:pointer;border-radius:3px;position:relative;transition:outline .1s}
+/* Grammar → Yellow highlight */
+.essay-rendered span.grammar{
+  background:#fef08a;
+  border-radius:3px;
+  padding:1px 3px;
+  cursor:pointer;
+  position:relative;
+  transition:all .12s;
+}
+.essay-rendered span.grammar:hover{
+  outline:2px solid #ca8a04;
+  outline-offset:1px;
+}
+.essay-rendered span.grammar.active-span{
+  outline:2.5px solid #2563eb !important;
+  outline-offset:2px;
+  background:#fde047;
+}
+.essay-rendered span.grammar s{
+  color:#92400e;
+  text-decoration:line-through;
+  text-decoration-color:#b45309;
+  text-decoration-thickness:1.5px;
+}
+.essay-rendered span.grammar mark{
+  background:none;
+  color:#166534;
+  font-weight:700;
+}
 
-.essay-rendered span.grammar:hover{outline:2px solid rgba(220,38,38,.5);outline-offset:2px;border-radius:3px}
-.essay-rendered span.vocabulary:hover{outline:2px solid rgba(180,83,9,.5);outline-offset:2px;border-radius:3px}
-.essay-rendered span.active-span{outline:2.5px solid #2563eb !important;outline-offset:2px;border-radius:3px;background:rgba(37,99,235,.05)}
+/* Vocabulary → Green highlight */
+.essay-rendered span.vocabulary{
+  background:#86efac;
+  border-radius:3px;
+  padding:1px 3px;
+  cursor:pointer;
+  position:relative;
+  transition:all .12s;
+}
+.essay-rendered span.vocabulary:hover{
+  outline:2px solid #16a34a;
+  outline-offset:1px;
+}
+.essay-rendered span.vocabulary.active-span{
+  outline:2.5px solid #2563eb !important;
+  outline-offset:2px;
+  background:#4ade80;
+}
+.essay-rendered span.vocabulary s{
+  color:#166534;
+  text-decoration:line-through;
+  text-decoration-color:#15803d;
+  text-decoration-thickness:1.5px;
+}
+.essay-rendered span.vocabulary mark{
+  background:none;
+  color:#14532d;
+  font-weight:700;
+}
 
-/* Grammar: red strikethrough + green mark */
-.essay-rendered span.grammar s{color:#dc2626;background:#fee2e2;text-decoration:line-through;text-decoration-color:#dc2626;padding:1px 2px;border-radius:2px}
-.essay-rendered span.grammar mark{color:#15803d;background:#dcfce7;padding:1px 4px;border-radius:2px;font-weight:600}
-
-/* Vocabulary: amber strikethrough + blue mark */
-.essay-rendered span.vocabulary s{color:#b45309;background:#fef3c7;text-decoration:line-through;text-decoration-color:#b45309;padding:1px 2px;border-radius:2px}
-.essay-rendered span.vocabulary mark{color:#1d4ed8;background:#dbeafe;padding:1px 4px;border-radius:2px;font-weight:600}
-
-/* Empty s/mark: hidden */
+/* Empty s/mark hidden */
 .essay-rendered s:empty,.essay-rendered mark:empty{display:none}
 
-/* Comment indicator */
-.essay-rendered span.has-comment::after{content:'●';font-size:7px;color:#15803d;vertical-align:super;margin-left:1px}
+/* Approved indicator on span */
+.essay-rendered span.approved::after{
+  content:'✓';
+  font-size:7px;
+  color:#15803d;
+  vertical-align:super;
+  margin-left:1px;
+  font-weight:700;
+}
+/* Deleted span: faded */
+.essay-rendered span.span-deleted{
+  opacity:.35;
+  cursor:default !important;
+}
 
 /* ── Right panel ── */
 .right-panel{background:#fff;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
 .right-header{padding:13px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
 .right-title{font-size:.88rem;font-weight:700}
 .right-stats{display:flex;gap:6px}
-.stat-chip{padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:600}
+.stat-chip{padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
 .sc-red{background:#fef2f2;color:#dc2626}
 .sc-green{background:#f0fdf4;color:#15803d}
 
-/* Active comment editor (top, fixed height) */
-.active-editor{border-bottom:1px solid #f3f4f6;flex-shrink:0;padding:14px 16px;min-height:54px;background:#fafafa}
-.ae-placeholder{color:#9ca3af;font-size:.82rem;text-align:center;padding:12px 0;display:flex;align-items:center;justify-content:center;gap:6px}
-
-.ae-error-header{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
-.badge-gr{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
-.badge-voc{background:#fef3c7;color:#b45309;border:1px solid #fde68a;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
-
-/* Mini correction preview in editor */
-.ae-correction{font-size:.8rem;color:#374151;padding:5px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;line-height:1.6}
-.ae-correction s{color:#dc2626;background:#fee2e2;text-decoration:line-through;padding:0 2px;border-radius:2px}
-.ae-correction mark{color:#15803d;background:#dcfce7;padding:0 3px;border-radius:2px;font-weight:600}
-.ae-correction.voc s{color:#b45309;background:#fef3c7}
-.ae-correction.voc mark{color:#1d4ed8;background:#dbeafe}
-
-.ae-textarea{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.82rem;line-height:1.65;font-family:inherit;resize:vertical;min-height:75px;margin:8px 0;transition:border-color .15s;background:#fff}
-.ae-textarea:focus{outline:none;border-color:#2563eb}
-
-.ae-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.btn-save-c{padding:5px 14px;background:#111827;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-save-c:hover{background:#1f2937}
-.btn-clear-sel{margin-left:auto;padding:4px 10px;background:none;color:#9ca3af;border:1px solid #e5e7eb;cursor:pointer;font-size:.73rem;font-family:inherit;border-radius:5px}
-.btn-clear-sel:hover{color:#6b7280;background:#f3f4f6}
-
-/* AI button with hover tooltip */
-.ai-btn-wrap{position:relative;display:inline-flex}
-.btn-use-ai{padding:5px 12px;background:#fff;color:#2563eb;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px}
-.btn-use-ai:hover{background:#eff6ff;border-color:#93c5fd}
-.ai-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:0;min-width:240px;max-width:300px;background:#1e293b;color:#f1f5f9;padding:10px 13px;border-radius:9px;font-size:.76rem;line-height:1.6;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none}
-.ai-tooltip::after{content:'';position:absolute;top:100%;left:16px;border:6px solid transparent;border-top-color:#1e293b}
-.ai-btn-wrap:hover .ai-tooltip{display:block}
-.ai-tooltip b{color:#93c5fd}
-
 /* Comments list */
-.comments-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-.list-label{font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;padding:0 2px}
-.saved-card{border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s}
-.saved-card:hover{border-color:#9ca3af;background:#fafafa}
-.saved-card.sc-active{border-color:#2563eb;background:#eff6ff}
-.sc-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.sc-body{font-size:.79rem;color:#374151;line-height:1.65;margin-bottom:8px}
-.sc-body b{color:#1d4ed8}
-.sc-acts{display:flex;gap:6px}
-.btn-sc-edit{padding:3px 10px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:inherit}
-.btn-sc-edit:hover{border-color:#9ca3af}
-.btn-sc-del{padding:3px 8px;background:none;color:#ef4444;border:1px solid #fecaca;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:inherit}
-.btn-sc-del:hover{background:#fef2f2}
-.empty-list{text-align:center;padding:28px 0;color:#9ca3af;font-size:.82rem;line-height:1.7}
+.comments-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.right-empty{padding:48px 20px;text-align:center;color:#9ca3af;font-size:.85rem;line-height:1.8}
+
+/* ── Comment card ── */
+.comment-card{border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;transition:border-color .15s,box-shadow .15s;cursor:pointer}
+.comment-card:hover{border-color:#9ca3af}
+.comment-card.active-card{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.comment-card.approved-card{border-color:#16a34a;background:#f0fdf4}
+.comment-card.editing-card{border-color:#2563eb;background:#eff6ff}
+.comment-card.deleted-card{display:none}
+
+.card-header{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid #f3f4f6;flex-wrap:wrap;background:rgba(0,0,0,.015)}
+.card-num{margin-left:auto;font-size:.7rem;color:#9ca3af;font-weight:600;flex-shrink:0}
+.card-correction{font-size:.79rem;color:#374151;display:flex;align-items:center;gap:3px;flex-wrap:wrap;flex:1}
+.card-correction s{color:#92400e;text-decoration:line-through;background:#fef08a;padding:0 2px;border-radius:2px}
+.card-correction.voc s{color:#166534;background:#86efac}
+.card-correction mark{background:none;color:#166534;font-weight:700}
+.card-correction.voc mark{color:#14532d}
+.approved-icon{color:#16a34a;font-weight:700;font-size:.85rem;flex-shrink:0}
+
+.card-body{padding:10px 12px}
+.card-text{font-size:.8rem;color:#374151;line-height:1.7}
+.card-text b{color:#1d4ed8}
+.card-textarea{width:100%;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.8rem;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;transition:border-color .15s;background:#fff}
+.card-textarea:focus{outline:none;border-color:#2563eb}
+
+.card-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid #f3f4f6;background:rgba(0,0,0,.01);align-items:center}
+.btn-approve{padding:4px 13px;background:#16a34a;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-approve:hover{background:#15803d}
+.btn-edit-c{padding:4px 11px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
+.btn-edit-c:hover{border-color:#9ca3af;color:#374151}
+.btn-del-c{padding:4px 9px;background:none;color:#ef4444;border:1px solid #fecaca;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit;margin-left:auto}
+.btn-del-c:hover{background:#fef2f2}
+.btn-save-c{padding:4px 13px;background:#2563eb;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-save-c:hover{background:#1d4ed8}
+.btn-cancel-c{padding:4px 10px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
+.btn-cancel-c:hover{border-color:#9ca3af}
+
+/* Badges */
+.badge-gr{background:#fef9c3;color:#854d0e;border:1px solid #fde047;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
+.badge-voc{background:#dcfce7;color:#166534;border:1px solid #86efac;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
 
 /* Footer */
-.right-footer{padding:10px 14px;border-top:1px solid #e5e7eb;flex-shrink:0}
+.right-footer{padding:10px 14px;border-top:1px solid #e5e7eb;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.footer-row{display:flex;gap:8px}
+.btn-approve-all{flex:1;padding:8px;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-approve-all:hover:not(:disabled){background:#dcfce7}
+.btn-approve-all:disabled{opacity:.4;cursor:not-allowed}
 .btn-copy-all{width:100%;padding:9px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-copy-all:disabled{opacity:.4;cursor:not-allowed}
 .btn-copy-all:hover:not(:disabled){background:#047857}
-
-/* Right panel empty (before grading) */
-.right-empty{padding:48px 20px;text-align:center;color:#9ca3af;font-size:.85rem;line-height:1.7}
 </style>
 </head>
 <body>
@@ -229,11 +280,11 @@ textarea{resize:vertical;min-height:150px;line-height:1.65}
               <label>Tuần học</label>
               <select id="week" onchange="updatePrompt()">
                 <option value="">-- Chọn tuần --</option>
-                <option value="1">Tuần 1 — Verb patterns & Prepositions</option>
-                <option value="2">Tuần 2 — Collocations & Verb patterns</option>
+                <option value="1">Tuần 1 — Verb patterns</option>
+                <option value="2">Tuần 2 — Collocations</option>
                 <option value="3">Tuần 3 — Thì động từ</option>
                 <option value="4">Tuần 4 — Adj vs Adv</option>
-                <option value="5">Tuần 5 — Prep phrase & Liên từ</option>
+                <option value="5">Tuần 5 — Prep phrase</option>
                 <option value="6">Tuần 6 — Adj clause (xác định)</option>
                 <option value="7">Tuần 7 — Adj clause (không xác định)</option>
                 <option value="8">Tuần 8 — Bị động</option>
@@ -267,9 +318,9 @@ textarea{resize:vertical;min-height:150px;line-height:1.65}
         </div>
 
         <div class="legend">
-          <div class="legend-item"><span class="ld-gr-s">sai</span><span style="color:#9ca3af;font-size:.72rem">→</span><span class="ld-gr-m">đúng</span><span>Ngữ pháp (GR)</span></div>
-          <div class="legend-item"><span class="ld-voc-s">sai</span><span style="color:#9ca3af;font-size:.72rem">→</span><span class="ld-voc-m">đúng</span><span>Từ vựng (LR)</span></div>
-          <div class="legend-item" style="color:#15803d;font-size:.72rem">● đã có nhận xét</div>
+          <div class="legend-item"><span class="ld-gr">GR</span> Ngữ pháp</div>
+          <div class="legend-item"><span class="ld-voc">LR</span> Từ vựng</div>
+          <div class="legend-item"><span class="ld-check">✓</span> Đã duyệt</div>
         </div>
 
         <div class="essay-rendered" id="essay-rendered"></div>
@@ -279,24 +330,22 @@ textarea{resize:vertical;min-height:150px;line-height:1.65}
     <!-- RIGHT -->
     <div class="right-panel">
       <div class="right-header">
-        <span class="right-title">Nhận xét</span>
+        <span class="right-title">Nhận xét chi tiết</span>
         <div class="right-stats">
           <span class="stat-chip sc-red" id="stat-total">0 lỗi</span>
-          <span class="stat-chip sc-green" id="stat-comments">0 nhận xét</span>
+          <span class="stat-chip sc-green" id="stat-approved">0 duyệt</span>
         </div>
       </div>
 
-      <!-- Active editor -->
-      <div class="active-editor" id="active-editor">
-        <div class="right-empty" style="padding:20px 0">Chấm bài để bắt đầu</div>
+      <div class="comments-list" id="comments-list">
+        <div class="right-empty">Chấm bài để xem<br>nhận xét AI tự động</div>
       </div>
 
-      <!-- Comments list -->
-      <div class="comments-list" id="comments-list"></div>
-
-      <!-- Footer -->
       <div class="right-footer">
-        <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét</button>
+        <div class="footer-row">
+          <button class="btn-approve-all" id="btn-approve-all" onclick="approveAll()" disabled>✓ Duyệt tất cả</button>
+        </div>
+        <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
       </div>
     </div>
 
@@ -318,9 +367,9 @@ const WEEK_DATA = {
 
 // ── State ──
 let correctedHtml = '';
-let errors = [];           // [{id, type, ai_comment}]
-let teacherComments = {};  // {id: {text}}
-let activeSpanId = null;
+let errors = [];         // [{id, type, ai_comment}]
+let cardStates = {};     // {id: {text, approved, editing, deleted}}
+let activeId = null;
 let currentSession = null;
 let essayText = '';
 
@@ -374,11 +423,14 @@ async function gradeEssay(){
     const data=await res.json();
 
     correctedHtml=data.corrected_html||'';
-    errors=(data.errors||[]);
-    teacherComments={};
-    activeSpanId=null;
+    errors=data.errors||[];
+    cardStates={};
+    errors.forEach(e=>{
+      cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
+    });
+    activeId=null;
 
-    currentSession={id:Date.now(),name,week:Number(week),essay:essayText,correctedHtml,errors,teacherComments,errorCount:errors.length,time:new Date().toISOString()};
+    currentSession={id:Date.now(),name,week:Number(week),essay:essayText,correctedHtml,errors,cardStates,errorCount:errors.length,time:new Date().toISOString()};
     saveSession(currentSession);
     showResults(name,week);
   }catch(err){
@@ -390,180 +442,196 @@ async function gradeEssay(){
 }
 
 // ── Show results ──
-function showResults(name, week){
+function showResults(name,week){
   document.getElementById('input-section').style.display='none';
   document.getElementById('essay-result').style.display='block';
   document.getElementById('result-name').textContent=name;
   document.getElementById('result-week-chip').textContent='Tuần '+week;
 
-  // Render corrected HTML
   const rendered=document.getElementById('essay-rendered');
   rendered.innerHTML=correctedHtml.replace(/\n/g,'<br>');
 
-  // Restore has-comment from saved session
-  Object.keys(teacherComments).forEach(id=>{
+  // Restore visual states from saved cardStates
+  Object.entries(cardStates).forEach(([id,st])=>{
     const sp=rendered.querySelector('span[id="'+id+'"]');
-    if(sp) sp.classList.add('has-comment');
+    if(!sp) return;
+    if(st.deleted) sp.classList.add('span-deleted');
+    else if(st.approved) sp.classList.add('approved');
   });
 
   setupSpanHandlers();
+  renderCommentCards();
   updateStats();
-  updateActiveEditor();
-  renderCommentsList();
 }
 
 // ── Span interaction ──
 function setupSpanHandlers(){
-  const rendered=document.getElementById('essay-rendered');
-  rendered.querySelectorAll('span.grammar,span.vocabulary').forEach(span=>{
-    span.addEventListener('click',()=>selectSpan(span.id));
+  document.getElementById('essay-rendered').querySelectorAll('span.grammar,span.vocabulary').forEach(span=>{
+    span.addEventListener('click',()=>{
+      if(cardStates[span.id]?.deleted) return;
+      selectError(span.id);
+    });
   });
 }
 
-function selectSpan(id){
+function selectError(id){
   // Deselect previous
-  if(activeSpanId){
-    const prev=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
+  if(activeId){
+    const prev=document.querySelector('#essay-rendered span[id="'+activeId+'"]');
     if(prev) prev.classList.remove('active-span');
+    const prevCard=document.getElementById('card-'+activeId);
+    if(prevCard) prevCard.classList.remove('active-card');
   }
-  activeSpanId=id;
+  activeId=id;
   const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(span){ span.classList.add('active-span'); span.scrollIntoView({block:'nearest',behavior:'smooth'}); }
-  updateActiveEditor();
-  renderCommentsList();
+  if(span){span.classList.add('active-span');span.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  const card=document.getElementById('card-'+id);
+  if(card){card.classList.add('active-card');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
 }
 
-function clearSelection(){
-  if(activeSpanId){
-    const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
-    if(span) span.classList.remove('active-span');
-  }
-  activeSpanId=null;
-  updateActiveEditor();
-  renderCommentsList();
-}
-
-// ── Active editor ──
-function updateActiveEditor(){
-  const editor=document.getElementById('active-editor');
-
-  if(!activeSpanId){
-    const hasErrors=errors.length>0;
-    editor.innerHTML=hasErrors
-      ? '<div class="ae-placeholder">👆 Click vào lỗi được tô màu để thêm nhận xét</div>'
-      : '<div class="right-empty" style="padding:16px 0">Chấm bài để bắt đầu</div>';
-    return;
-  }
-
-  const error=errors.find(e=>e.id===activeSpanId)||{};
-  const existing=teacherComments[activeSpanId];
-  const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
-  const spanHtml=span?span.innerHTML:'';
-  const isGr=error.type==='grammar';
-
-  // Build tooltip HTML (AI comment preview)
-  const aiText=error.ai_comment?renderMd(error.ai_comment):'(Không có comment AI)';
-
-  editor.innerHTML=`
-    <div class="ae-error-header">
-      <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GRAMMAR':'VOCABULARY'}</span>
-      <div class="ae-correction ${isGr?'':'voc'}">${spanHtml}</div>
-    </div>
-    <textarea class="ae-textarea" id="ae-textarea" placeholder="Nhập nhận xét của bạn...">${existing?esc(existing.text):''}</textarea>
-    <div class="ae-actions">
-      <button class="btn-save-c" onclick="saveTeacherComment()">Lưu nhận xét</button>
-      <div class="ai-btn-wrap">
-        <button class="btn-use-ai" onclick="useAIComment()">✨ Dùng comment AI</button>
-        <div class="ai-tooltip">${aiText}</div>
-      </div>
-      <button class="btn-clear-sel" onclick="clearSelection()">✕</button>
-    </div>`;
-}
-
-function useAIComment(){
-  const error=errors.find(e=>e.id===activeSpanId);
-  if(!error) return;
-  const ta=document.getElementById('ae-textarea');
-  if(ta){ ta.value=error.ai_comment; ta.focus(); }
-}
-
-function saveTeacherComment(){
-  const ta=document.getElementById('ae-textarea');
-  if(!ta||!ta.value.trim()) return;
-  teacherComments[activeSpanId]={text:ta.value.trim()};
-  const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
-  if(span) span.classList.add('has-comment');
-  updateStats();
-  autosave();
-  clearSelection();
-}
-
-// ── Comments list ──
-function renderCommentsList(){
+// ── Render comment cards ──
+function renderCommentCards(){
   const list=document.getElementById('comments-list');
-  const ids=Object.keys(teacherComments);
-  if(!ids.length){
-    list.innerHTML='<div class="empty-list">Chưa có nhận xét nào<br><span style="font-size:.75rem">Click vào lỗi tô màu để thêm</span></div>';
+  const visible=errors.filter(e=>!cardStates[e.id]?.deleted);
+
+  if(!visible.length){
+    list.innerHTML='<div class="right-empty">'+(errors.length?'Tất cả lỗi đã bị xoá':'Không có lỗi nào trong bài')+'</div>';
     return;
   }
-  list.innerHTML='<div class="list-label">Nhận xét đã lưu ('+ids.length+')</div>'+ids.map(id=>{
-    const tc=teacherComments[id];
-    const error=errors.find(e=>e.id===id)||{};
-    const isActive=id===activeSpanId;
-    const isGr=error.type==='grammar';
-    return`<div class="saved-card ${isActive?'sc-active':''}" onclick="selectSpan('${id}')">
-      <div class="sc-top">
+
+  list.innerHTML=visible.map((err,i)=>{
+    const st=cardStates[err.id]||{text:'',approved:false,editing:false};
+    const isGr=err.type==='grammar';
+    const isActive=err.id===activeId;
+
+    // Get span HTML for correction preview
+    const span=document.querySelector('#essay-rendered span[id="'+err.id+'"]');
+    const spanHtml=span?span.innerHTML:'';
+
+    let cardClass='comment-card';
+    if(isActive) cardClass+=' active-card';
+    if(st.approved&&!st.editing) cardClass+=' approved-card';
+    if(st.editing) cardClass+=' editing-card';
+
+    const bodyHtml=st.editing
+      ? `<textarea class="card-textarea" id="ta-${err.id}">${esc(st.text)}</textarea>`
+      : `<div class="card-text">${renderMd(st.text)}</div>`;
+
+    const actionsHtml=st.editing
+      ? `<button class="btn-cancel-c" onclick="event.stopPropagation();cancelEdit('${err.id}')">Huỷ</button>
+         <button class="btn-save-c" onclick="event.stopPropagation();saveEdit('${err.id}')">✓ Lưu & Duyệt</button>
+         <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
+      : st.approved
+        ? `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa lại</button>
+           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
+        : `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa</button>
+           <button class="btn-approve" onclick="event.stopPropagation();approveCard('${err.id}')">✓ Duyệt</button>
+           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`;
+
+    return`<div class="${cardClass}" id="card-${err.id}" onclick="selectError('${err.id}')">
+      <div class="card-header">
+        ${st.approved&&!st.editing?'<span class="approved-icon">✓</span>':''}
         <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GR':'LR'}</span>
+        <div class="card-correction ${isGr?'':'voc'}">${spanHtml}</div>
+        <span class="card-num">#${i+1}</span>
       </div>
-      <div class="sc-body">${renderMd(tc.text)}</div>
-      <div class="sc-acts">
-        <button class="btn-sc-edit" onclick="event.stopPropagation();editComment('${id}')">Sửa</button>
-        <button class="btn-sc-del" onclick="event.stopPropagation();deleteComment('${id}')">Xoá</button>
-      </div>
+      <div class="card-body">${bodyHtml}</div>
+      <div class="card-actions">${actionsHtml}</div>
     </div>`;
   }).join('');
+
+  // Auto-resize textareas
+  document.querySelectorAll('.card-textarea').forEach(ta=>{
+    ta.style.height='auto';
+    ta.style.height=ta.scrollHeight+'px';
+    ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+  });
 }
 
-function editComment(id){
-  // Fill textarea with existing comment and select span
-  teacherComments[id]=teacherComments[id]||{text:''};
-  selectSpan(id);
-  setTimeout(()=>{const ta=document.getElementById('ae-textarea');if(ta){ta.value=teacherComments[id].text;ta.focus();}},50);
+// ── Card actions ──
+function approveCard(id){
+  cardStates[id].approved=true;
+  cardStates[id].editing=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp){sp.classList.add('approved');sp.classList.remove('active-span');}
+  if(activeId===id) activeId=null;
+  updateStats(); autosave(); renderCommentCards();
 }
 
-function deleteComment(id){
-  delete teacherComments[id];
-  const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
-  if(span) span.classList.remove('has-comment');
-  if(activeSpanId===id) clearSelection();
-  updateStats();
-  renderCommentsList();
-  autosave();
+function startEdit(id){
+  // Close other edits
+  Object.keys(cardStates).forEach(k=>{
+    if(k!==id) cardStates[k].editing=false;
+  });
+  cardStates[id].editing=true;
+  cardStates[id].approved=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp) sp.classList.remove('approved');
+  updateStats(); renderCommentCards();
+  selectError(id);
+  setTimeout(()=>{
+    const ta=document.getElementById('ta-'+id);
+    if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}
+  },50);
 }
 
-function updateStats(){
-  const total=errors.length;
-  const commented=Object.keys(teacherComments).length;
-  document.getElementById('stat-total').textContent=total+' lỗi';
-  document.getElementById('stat-comments').textContent=commented+' nhận xét';
-  document.getElementById('btn-copy-all').disabled=commented===0;
+function saveEdit(id){
+  const ta=document.getElementById('ta-'+id);
+  if(ta) cardStates[id].text=ta.value.trim()||cardStates[id].text;
+  cardStates[id].editing=false;
+  approveCard(id);
+}
+
+function cancelEdit(id){
+  cardStates[id].editing=false;
+  renderCommentCards();
+}
+
+function deleteCard(id){
+  cardStates[id].deleted=true;
+  cardStates[id].editing=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp){sp.classList.remove('approved','active-span');sp.classList.add('span-deleted');}
+  if(activeId===id) activeId=null;
+  updateStats(); autosave(); renderCommentCards();
+}
+
+function approveAll(){
+  errors.forEach(e=>{
+    if(!cardStates[e.id].deleted&&!cardStates[e.id].approved&&!cardStates[e.id].editing){
+      cardStates[e.id].approved=true;
+      const sp=document.querySelector('#essay-rendered span[id="'+e.id+'"]');
+      if(sp) sp.classList.add('approved');
+    }
+  });
+  activeId=null;
+  updateStats(); autosave(); renderCommentCards();
 }
 
 function copyAll(){
-  const parts=Object.entries(teacherComments).map(([id,tc])=>{
-    const error=errors.find(e=>e.id===id)||{};
-    return'['+( error.type==='grammar'?'GR':'LR')+']\n'+tc.text;
-  });
+  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted);
+  if(!approved.length) return;
+  const parts=approved.map(e=>'['+(e.type==='grammar'?'GR':'LR')+']\n'+cardStates[e.id].text);
   navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
     const b=document.getElementById('btn-copy-all');
     b.textContent='✓ Đã copy!';
-    setTimeout(()=>b.textContent='Copy tất cả nhận xét',2000);
+    setTimeout(()=>b.textContent='Copy tất cả nhận xét đã duyệt',2000);
   });
+}
+
+// ── Stats ──
+function updateStats(){
+  const total=errors.filter(e=>!cardStates[e.id]?.deleted).length;
+  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted).length;
+  document.getElementById('stat-total').textContent=total+' lỗi';
+  document.getElementById('stat-approved').textContent=approved+' duyệt';
+  document.getElementById('btn-copy-all').disabled=approved===0;
+  document.getElementById('btn-approve-all').disabled=approved>=total;
 }
 
 // ── Reset ──
 function resetForm(){
-  correctedHtml=''; errors=[]; teacherComments={}; activeSpanId=null; essayText=''; currentSession=null;
+  correctedHtml=''; errors=[]; cardStates={}; activeId=null; essayText=''; currentSession=null;
   document.getElementById('student-name').value='';
   document.getElementById('week').value='';
   document.getElementById('essay').value='';
@@ -575,17 +643,17 @@ function resetForm(){
   document.getElementById('err-banner').style.display='none';
   document.getElementById('input-section').style.display='block';
   document.getElementById('essay-result').style.display='none';
-  document.getElementById('active-editor').innerHTML='<div class="right-empty" style="padding:16px 0">Chấm bài để bắt đầu</div>';
-  document.getElementById('comments-list').innerHTML='';
+  document.getElementById('comments-list').innerHTML='<div class="right-empty">Chấm bài để xem<br>nhận xét AI tự động</div>';
   document.getElementById('stat-total').textContent='0 lỗi';
-  document.getElementById('stat-comments').textContent='0 nhận xét';
+  document.getElementById('stat-approved').textContent='0 duyệt';
   document.getElementById('btn-copy-all').disabled=true;
+  document.getElementById('btn-approve-all').disabled=true;
 }
 
 // ── localStorage ──
 function getSessions(){try{return JSON.parse(localStorage.getItem('root_sessions')||'[]');}catch{return[];}}
 function saveSession(s){const arr=getSessions();const i=arr.findIndex(x=>x.id===s.id);if(i>=0)arr[i]=s;else arr.unshift(s);localStorage.setItem('root_sessions',JSON.stringify(arr.slice(0,100)));}
-function autosave(){if(!currentSession)return;currentSession.teacherComments=teacherComments;saveSession(currentSession);}
+function autosave(){if(!currentSession)return;currentSession.cardStates=cardStates;saveSession(currentSession);}
 
 // ── History ──
 function renderHistory(){
@@ -599,9 +667,9 @@ function renderHistory(){
   c.innerHTML='<div class="history-list">'+sessions.map(s=>{
     const d=new Date(s.time);
     const t=d.toLocaleDateString('vi-VN')+' '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-    const commented=Object.keys(s.teacherComments||{}).length;
+    const approved=Object.values(s.cardStates||{}).filter(x=>x.approved&&!x.deleted).length;
     return`<div class="history-card" onclick="openSession(${s.id})">
-      <div><div class="h-name">${esc(s.name)}</div><div class="h-meta">${s.errorCount} lỗi · ${commented} nhận xét · ${t}</div></div>
+      <div><div class="h-name">${esc(s.name)}</div><div class="h-meta">${s.errorCount} lỗi · ${approved} đã duyệt · ${t}</div></div>
       <div class="h-right">
         <span class="chip chip-week">Tuần ${s.week}</span>
         <span class="chip ${s.errorCount===0?'chip-ok':'chip-err'}">${s.errorCount===0?'Không lỗi':s.errorCount+' lỗi'}</span>
@@ -616,9 +684,12 @@ function openSession(id){
   currentSession=s;
   correctedHtml=s.correctedHtml||'';
   errors=s.errors||[];
-  teacherComments=s.teacherComments||{};
+  cardStates=s.cardStates||{};
+  errors.forEach(e=>{
+    if(!cardStates[e.id]) cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
+  });
   essayText=s.essay||'';
-  activeSpanId=null;
+  activeId=null;
   document.getElementById('student-name').value=s.name;
   document.getElementById('week').value=s.week;
   document.getElementById('essay').value=s.essay||'';
