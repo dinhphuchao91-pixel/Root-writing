@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Prototype Chấm Bài — ROOT</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8f9fa;color:#111827;font-size:15px;min-height:100vh}
+
+/* Header */
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem}
+.logo-icon{width:30px;height:30px;background:#16a34a;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+.api-wrap{display:flex;align-items:center;gap:8px}
+.api-label{font-size:.75rem;color:#6b7280;white-space:nowrap}
+#api-key-input{padding:5px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.8rem;font-family:inherit;width:260px;background:#f9fafb}
+#api-key-input:focus{outline:none;border-color:#16a34a}
+.btn-save-key{padding:5px 12px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:.78rem;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-save-key:hover{background:#15803d}
+.key-ok{color:#15803d;font-size:.75rem;font-weight:600}
+
+/* Layout */
+.mark-layout{display:grid;grid-template-columns:1fr 420px;height:calc(100vh - 54px)}
+@media(max-width:860px){.mark-layout{grid-template-columns:1fr;height:auto}}
+
+/* Left panel */
+.left-panel{padding:24px;border-right:1px solid #e5e7eb;overflow-y:auto;height:100%}
+.section-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin-bottom:14px}
+.section-card h3{font-size:.88rem;font-weight:700;color:#374151;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:.78rem;font-weight:600;color:#374151}
+input[type=text],select,textarea{width:100%;padding:8px 11px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.875rem;font-family:inherit;transition:border-color .15s;background:#fff}
+input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:#16a34a}
+select{cursor:pointer}
+textarea{resize:vertical;min-height:150px;line-height:1.65}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prompt-box{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:7px;padding:10px 12px;font-size:.82rem;color:#374151;line-height:1.6;min-height:44px}
+.prompt-box.empty{color:#9ca3af;font-style:italic}
+.word-count{font-size:.75rem;text-align:right;margin-top:3px}
+.word-count.ok{color:#15803d}.word-count.low{color:#dc2626}
+.btn-grade{width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-grade:hover:not(:disabled){background:#1f2937}
+.btn-grade:disabled{opacity:.45;cursor:not-allowed}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err-banner{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 13px;border-radius:7px;font-size:.85rem;margin-top:10px;white-space:pre-wrap}
+
+/* Essay result */
+.essay-result{display:none}
+.result-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.result-title{font-size:1rem;font-weight:700}
+.meta-chip{padding:3px 10px;border-radius:6px;font-size:.75rem;font-weight:600;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
+.meta-chip.done{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.reset-btn{font-size:.75rem;color:#6b7280;background:none;border:1px solid #e5e7eb;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
+.reset-btn:hover{background:#f3f4f6}
+
+/* Legend */
+.legend{display:flex;gap:16px;margin-bottom:14px;padding:9px 14px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#6b7280}
+.ld-gr{background:#fef08a;color:#78350f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
+.ld-voc{background:#86efac;color:#14532d;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700}
+
+/* Essay rendered - CRM style */
+.essay-rendered{line-height:2.2;font-size:.93rem;color:#1f2937;white-space:pre-wrap;padding:4px 0}
+
+/* Grammar → Yellow */
+.essay-rendered span.grammar{background:#fef08a;border-radius:3px;padding:1px 3px;cursor:pointer;position:relative;transition:all .12s}
+.essay-rendered span.grammar:hover{outline:2px solid #ca8a04;outline-offset:1px}
+.essay-rendered span.grammar.active-span{outline:2.5px solid #2563eb!important;outline-offset:2px;background:#fde047}
+.essay-rendered span.grammar s{color:#92400e;text-decoration:line-through;text-decoration-color:#b45309;text-decoration-thickness:1.5px}
+.essay-rendered span.grammar mark{background:none;color:#166534;font-weight:700}
+
+/* Vocabulary → Green */
+.essay-rendered span.vocabulary{background:#86efac;border-radius:3px;padding:1px 3px;cursor:pointer;position:relative;transition:all .12s}
+.essay-rendered span.vocabulary:hover{outline:2px solid #16a34a;outline-offset:1px}
+.essay-rendered span.vocabulary.active-span{outline:2.5px solid #2563eb!important;outline-offset:2px;background:#4ade80}
+.essay-rendered span.vocabulary s{color:#166534;text-decoration:line-through;text-decoration-color:#15803d;text-decoration-thickness:1.5px}
+.essay-rendered span.vocabulary mark{background:none;color:#14532d;font-weight:700}
+
+.essay-rendered s:empty,.essay-rendered mark:empty{display:none}
+.essay-rendered span.approved::after{content:'✓';font-size:7px;color:#15803d;vertical-align:super;margin-left:1px;font-weight:700}
+.essay-rendered span.span-deleted{opacity:.35;cursor:default!important}
+
+/* Right panel */
+.right-panel{background:#fff;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
+.right-header{padding:13px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.right-title{font-size:.88rem;font-weight:700}
+.right-stats{display:flex;gap:6px}
+.stat-chip{padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
+.sc-red{background:#fef2f2;color:#dc2626}
+.sc-green{background:#f0fdf4;color:#15803d}
+
+/* Comments list */
+.comments-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.right-empty{padding:48px 20px;text-align:center;color:#9ca3af;font-size:.85rem;line-height:1.8}
+
+/* Comment card */
+.comment-card{border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;transition:border-color .15s,box-shadow .15s;cursor:pointer}
+.comment-card:hover{border-color:#9ca3af}
+.comment-card.active-card{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.comment-card.approved-card{border-color:#16a34a;background:#f0fdf4}
+.comment-card.editing-card{border-color:#2563eb;background:#eff6ff}
+
+.card-header{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid #f3f4f6;flex-wrap:wrap;background:rgba(0,0,0,.015)}
+.card-num{margin-left:auto;font-size:.7rem;color:#9ca3af;font-weight:600;flex-shrink:0}
+.card-correction{font-size:.79rem;color:#374151;display:flex;align-items:center;gap:3px;flex-wrap:wrap;flex:1}
+.card-correction s{color:#92400e;text-decoration:line-through;background:#fef08a;padding:0 2px;border-radius:2px}
+.card-correction.voc s{color:#166534;background:#86efac}
+.card-correction mark{background:none;color:#166534;font-weight:700}
+.card-correction.voc mark{color:#14532d}
+.approved-icon{color:#16a34a;font-weight:700;font-size:.85rem;flex-shrink:0}
+
+.card-body{padding:10px 12px}
+.card-text{font-size:.8rem;color:#374151;line-height:1.7}
+.card-text b{color:#1d4ed8}
+.card-textarea{width:100%;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.8rem;line-height:1.65;font-family:inherit;resize:none;overflow:hidden;transition:border-color .15s;background:#fff}
+.card-textarea:focus{outline:none;border-color:#2563eb}
+
+.card-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid #f3f4f6;background:rgba(0,0,0,.01);align-items:center}
+.btn-approve{padding:4px 13px;background:#16a34a;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-approve:hover{background:#15803d}
+.btn-edit-c{padding:4px 11px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
+.btn-edit-c:hover{border-color:#9ca3af;color:#374151}
+.btn-del-c{padding:4px 9px;background:none;color:#ef4444;border:1px solid #fecaca;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit;margin-left:auto}
+.btn-del-c:hover{background:#fef2f2}
+.btn-save-c{padding:4px 13px;background:#2563eb;color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-save-c:hover{background:#1d4ed8}
+.btn-cancel-c{padding:4px 10px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.75rem;cursor:pointer;font-family:inherit}
+.btn-cancel-c:hover{border-color:#9ca3af}
+
+/* Badges */
+.badge-gr{background:#fef9c3;color:#854d0e;border:1px solid #fde047;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
+.badge-voc{background:#dcfce7;color:#166534;border:1px solid #86efac;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:700;letter-spacing:.03em;flex-shrink:0}
+
+/* Footer */
+.right-footer{padding:10px 14px;border-top:1px solid #e5e7eb;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.footer-row{display:flex;gap:8px}
+.btn-approve-all{flex:1;padding:8px;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-approve-all:hover:not(:disabled){background:#dcfce7}
+.btn-approve-all:disabled{opacity:.4;cursor:not-allowed}
+.btn-copy-all{width:100%;padding:9px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-copy-all:disabled{opacity:.4;cursor:not-allowed}
+.btn-copy-all:hover:not(:disabled){background:#047857}
+
+/* Debug panel */
+.debug-panel{background:#1e293b;color:#94a3b8;font-size:.72rem;padding:8px 12px;border-top:1px solid #334155;font-family:monospace;max-height:80px;overflow-y:auto;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">✏️</div>
+    ROOT Writing Marker — Prototype
+  </div>
+  <div class="api-wrap">
+    <span class="api-label">API Key:</span>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..."/>
+    <button class="btn-save-key" onclick="saveKey()">Lưu</button>
+    <span class="key-ok" id="key-ok" style="display:none">✓ Đã lưu</span>
+  </div>
+</header>
+
+<div class="mark-layout">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <!-- INPUT -->
+    <div id="input-section">
+      <div class="section-card">
+        <h3>Thông tin bài chấm</h3>
+        <div class="form-2col">
+          <div class="field">
+            <label>Tên học sinh</label>
+            <input type="text" id="student-name" placeholder="Nhập tên..."/>
+          </div>
+          <div class="field">
+            <label>Tuần học</label>
+            <select id="week" onchange="updatePrompt()">
+              <option value="">-- Chọn tuần --</option>
+              <option value="1">Tuần 1 — Verb patterns</option>
+              <option value="2">Tuần 2 — Collocations</option>
+              <option value="3">Tuần 3 — Thì động từ</option>
+              <option value="4">Tuần 4 — Adj vs Adv</option>
+              <option value="5">Tuần 5 — Prep phrase</option>
+              <option value="6">Tuần 6 — Adj clause (xác định)</option>
+              <option value="7">Tuần 7 — Adj clause (không xác định)</option>
+              <option value="8">Tuần 8 — Bị động</option>
+              <option value="9">Tuần 9 — Tổng hợp</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Đề bài</label>
+          <div class="prompt-box empty" id="prompt-box">Chọn tuần để xem đề bài...</div>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Bài làm của học sinh</h3>
+        <div class="field">
+          <textarea id="essay" placeholder="Paste bài viết vào đây..." oninput="updateWordCount()"></textarea>
+          <div class="word-count low" id="word-count">0 từ</div>
+        </div>
+        <button class="btn-grade" id="btn-grade" onclick="gradeEssay()" disabled>Chấm bài</button>
+        <div id="err-banner" class="err-banner" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="essay-result" class="essay-result">
+      <div class="result-meta">
+        <span class="result-title" id="result-name"></span>
+        <span class="meta-chip done">Đã chấm bài</span>
+        <span class="meta-chip" id="result-week-chip">Tuần ?</span>
+        <button class="reset-btn" onclick="resetForm()">↺ Chấm bài khác</button>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><span class="ld-gr">GR</span> Ngữ pháp</div>
+        <div class="legend-item"><span class="ld-voc">LR</span> Từ vựng</div>
+        <div class="legend-item" style="color:#15803d;font-size:.72rem;font-weight:700">✓ Đã duyệt</div>
+      </div>
+      <div class="essay-rendered" id="essay-rendered"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="right-header">
+      <span class="right-title">Nhận xét chi tiết</span>
+      <div class="right-stats">
+        <span class="stat-chip sc-red" id="stat-total">0 lỗi</span>
+        <span class="stat-chip sc-green" id="stat-approved">0 duyệt</span>
+      </div>
+    </div>
+
+    <div class="comments-list" id="comments-list">
+      <div class="right-empty">Nhập API key + chấm bài<br>để xem nhận xét AI</div>
+    </div>
+
+    <div class="right-footer">
+      <div class="footer-row">
+        <button class="btn-approve-all" id="btn-approve-all" onclick="approveAll()" disabled>✓ Duyệt tất cả</button>
+      </div>
+      <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
+    </div>
+
+    <div class="debug-panel" id="debug-panel">Debug: sẵn sàng</div>
+  </div>
+
+</div>
+
+<script>
+// ── Week data ──
+const WEEK_DATA = {
+  1:'harm sb/sth | allow sb to do sth / at an early age | spend time doing sth / before an exam | force sb to do sth / extra after-school classes | spend money on sth / savings / district 1 | violent content / influence sb/sth / behaviour',
+  2:'consider (v) / apply to sth / vì → because + S-FV | ask sb to do sth / homework | make sb + adj / office worker / burnout | unlike + N / decide (v) / challenging (adj) | provide sb with sth / job opportunity | discuss / future plan / before + V-ing / drop out of',
+  3:'cancel / trip / problem / flight | flight / depart / prepare / visit | during + noun / quiet / hometown / congestion | job opportunities / access | the authorities / encourage / tourism industry / economy',
+  4:'risk (n) / disease (n) | thường / quá nhiều | stressed / because + S-FV / enough | household chores / food delivery app | lifestyle / such as + V-ing',
+  5:'academic results / focus on / studies | thanks to / after + V-ing | option / work environment | announcement / sales department / pay rise | business trip / eventually | savings / eat out',
+  6:'Nối câu bằng adj clause (Ex1) | Viết câu có adj clause: platform / course / Google Translate / aim / policy (Ex2)',
+  7:"aware / tourist destination | Western country / nuclear | heavy industry / untreated waste | plastic waste / wild animal species | find (v) = cảm thấy | ozone layer / sun's radiation / greenhouse gases",
+  8:'sell / district 1 / colleague | cancel / trip / plan | consider / drugs / back then | dominate | overtime | punish / litter / regulation',
+  9:'6 phần A-F: Viết câu | Sửa lỗi | Adj/Adv | Prep phrase | Adj clause | Adj clause + conjunctions',
+};
+
+// ── State ──
+let errors = [];
+let cardStates = {};
+let activeId = null;
+
+function dbg(msg){ document.getElementById('debug-panel').textContent = 'Debug: '+msg; }
+
+// ── API key ──
+function saveKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k) return;
+  localStorage.setItem('proto_api_key',k);
+  document.getElementById('key-ok').style.display='inline';
+  setTimeout(()=>document.getElementById('key-ok').style.display='none',2000);
+}
+(function(){
+  const k=localStorage.getItem('proto_api_key');
+  if(k){document.getElementById('api-key-input').value=k;document.getElementById('key-ok').style.display='inline';setTimeout(()=>document.getElementById('key-ok').style.display='none',1500);}
+})();
+
+// ── Form ──
+function updatePrompt(){
+  const w=document.getElementById('week').value;
+  const box=document.getElementById('prompt-box');
+  if(w&&WEEK_DATA[w]){box.textContent=WEEK_DATA[w];box.classList.remove('empty');}
+  else{box.textContent='Chọn tuần để xem đề bài...';box.classList.add('empty');}
+  checkBtn();
+}
+function updateWordCount(){
+  const t=document.getElementById('essay').value.trim();
+  const n=t?t.split(/\s+/).length:0;
+  const el=document.getElementById('word-count');
+  el.textContent=n+' từ'; el.className='word-count '+(n>=10?'ok':'low');
+  checkBtn();
+}
+function checkBtn(){
+  const name=document.getElementById('student-name').value.trim();
+  const week=document.getElementById('week').value;
+  const essay=document.getElementById('essay').value.trim();
+  const key=document.getElementById('api-key-input').value.trim();
+  document.getElementById('btn-grade').disabled=!(name&&week&&key&&essay.split(/\s+/).filter(Boolean).length>=5);
+}
+document.getElementById('student-name').addEventListener('input',checkBtn);
+document.getElementById('api-key-input').addEventListener('input',checkBtn);
+
+// ── System prompt ──
+function buildPrompt(week){
+  const w=WEEK_DATA[week]||WEEK_DATA[1];
+  return `Ban la giao vien tieng Anh tai IELTS Youpass, dang cham bai writing khoa Root tuan ${week}.
+
+NHIEM VU: Doc bai hoc sinh, tim loi GR (ngu phap) va LR (tu vung/collocation), tra ve JSON.
+
+DE BAI TUAN ${week}: ${w}
+
+════ CACH DANH DAU LOI TRONG corrected_html ════
+
+Copy nguyen bai hoc sinh, chen span HTML tai vi tri loi.
+Dung dau nhay DON trong HTML attributes (tranh loi JSON).
+
+QUAN TRONG: Chi danh dau phan sai NHO NHAT co the.
+
+Them ky tu/tu:   exist<span id='N' class='TYPE'><s></s><mark>them</mark></span>ing
+Xoa ky tu/tu:    exist<span id='N' class='TYPE'><s>xoa</s><mark></mark></span>ing
+Doi ca tu:       <span id='N' class='TYPE'><s>sai</s><mark>dung</mark></span>
+
+TYPE = 'grammar' hoac 'vocabulary'
+N = so thu tu loi (1, 2, 3...)
+
+Vi du:
+- harm -> harms:  harm<span id='1' class='grammar'><s></s><mark>s</mark></span>
+- "at" -> "in":   <span id='2' class='grammar'><s>at</s><mark>in</mark></span>
+- "healthy"->"health": health<span id='3' class='vocabulary'><s>y</s><mark></mark></span>
+
+Xuong dong trong corrected_html: dung \\n giua cac cau/dong.
+
+════ CACH VIET AI COMMENT ════
+
+Giai thich theo NGU CANH cu the - KHONG noi "theo quy tac":
+
+S-V agreement:
+- N khong dem duoc -> so it -> "air pollution la N khong dem duoc -> FV phai la 'harms' em nhe"
+- N dem duoc noi chung -> so nhieu -> "dang noi chung -> dung 'office workers' em nhen"
+
+Thi dong tu:
+- Lich trinh co dinh: "chuyen bay co lich co dinh -> hien tai don em nhe"
+- Keo dai den hien tai: "tinh trang van con -> hien tai hoan thanh em nhen"
+
+Mao tu:
+- Dem duoc so it, lan dau: "'company' la N dem duoc so it -> can 'a' em nhe"
+- Doi tuong cu the: "dang noi ve doi tuong cu the -> can 'the' em ne"
+
+Gioi tu: khu vuc lon -> "in", dia diem cu the -> "at"
+
+Cong thuc dong tu (bold cong thuc):
+"consider + V-ing", "force sb + to-inf", "allow sb + to-inf",
+"spend time + V-ing", "provide sb + with sth", "make sb + bare inf"
+
+Thua tu: "'savings' da mang nghia tien tiet kiem -> khong can them 'money' em nhe"
+V(t)/V(i): "discuss la V(t) -> object truc tiep, khong can 'about' em nhe"
+Collocation sai: giai thich nghia cum sai, dua 2 cum tu nhien neu co the
+Loi chinh ta: chi can "Loi chinh ta em nhe."
+
+Giong van than thien, ket thuc = "em nhe" / "em nhen" / "em ne" (luan phien).
+Toi da 2-3 dong moi comment.
+
+════ OUTPUT - CHI TRA VE JSON HOP LE, KHONG TEXT THUA ════
+
+{
+  "corrected_html": "Cau 1 voi <span id='1' class='grammar'><s>sai</s><mark>dung</mark></span> day.\\nCau 2 tiep theo.",
+  "errors": [
+    {"id": "1", "type": "grammar", "ai_comment": "giai thich em nhe"},
+    {"id": "2", "type": "vocabulary", "ai_comment": "giai thich em nhen"}
+  ]
+}
+
+Luu y:
+- id trong span PHAI khop voi id trong mang errors
+- Dung \\n trong corrected_html de xuong dong giua cac cau
+- Neu bai khong co loi: {"corrected_html": "nguyen bai", "errors": []}`;
+}
+
+// ── Grade ──
+async function gradeEssay(){
+  const name=document.getElementById('student-name').value.trim();
+  const week=document.getElementById('week').value;
+  const essay=document.getElementById('essay').value.trim();
+  const apiKey=document.getElementById('api-key-input').value.trim();
+  const btn=document.getElementById('btn-grade');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang chấm...';
+  document.getElementById('err-banner').style.display='none';
+  dbg('Đang gọi API...');
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:8000,
+        system:buildPrompt(Number(week)),
+        messages:[{role:'user',content:`Tuan ${week}. Bai hoc sinh:\n\n${essay}`}],
+      }),
+    });
+    const data=await res.json();
+    dbg(`API status: ${res.status}, input: ${data.usage?.input_tokens}, output: ${data.usage?.output_tokens}`);
+
+    if(!res.ok){
+      if(res.status===401) throw new Error('API key không hợp lệ.');
+      if(res.status===429) throw new Error('Rate limit. Chờ một lúc rồi thử lại.');
+      throw new Error(data?.error?.message||'Lỗi API.');
+    }
+
+    const rawText=data.content?.find(b=>b.type==='text')?.text??'{}';
+    let cleaned=rawText.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/i,'').trim();
+    const jsonMatch=cleaned.match(/\{[\s\S]*\}/);
+    if(jsonMatch) cleaned=jsonMatch[0];
+
+    let parsed;
+    try{ parsed=JSON.parse(cleaned); }
+    catch(e){ throw new Error('AI không trả về JSON hợp lệ. Thử lại nhé.\n\nRaw: '+rawText.slice(0,200)); }
+
+    const correctedHtml=parsed.corrected_html||'';
+    errors=parsed.errors||[];
+    dbg(`Parsed OK: ${errors.length} lỗi, corrected_html length: ${correctedHtml.length}`);
+
+    // Init card states
+    cardStates={};
+    errors.forEach(e=>{
+      cardStates[e.id]={text:e.ai_comment||'',approved:false,editing:false,deleted:false};
+    });
+    activeId=null;
+
+    showResults(name,week,correctedHtml);
+  }catch(err){
+    const b=document.getElementById('err-banner');
+    b.textContent=err.message;
+    b.style.display='block';
+    dbg('Lỗi: '+err.message);
+  }
+  btn.disabled=false; btn.innerHTML='Chấm bài';
+}
+
+function showResults(name,week,correctedHtml){
+  document.getElementById('input-section').style.display='none';
+  document.getElementById('essay-result').style.display='block';
+  document.getElementById('result-name').textContent=name;
+  document.getElementById('result-week-chip').textContent='Tuần '+week;
+
+  const rendered=document.getElementById('essay-rendered');
+  rendered.innerHTML=correctedHtml.replace(/\n/g,'<br>');
+
+  setupSpanHandlers();
+  renderCommentCards();
+  updateStats();
+}
+
+function setupSpanHandlers(){
+  document.getElementById('essay-rendered').querySelectorAll('span.grammar,span.vocabulary').forEach(span=>{
+    span.addEventListener('click',()=>{
+      if(cardStates[span.id]?.deleted) return;
+      selectError(span.id);
+    });
+  });
+}
+
+function selectError(id){
+  if(activeId){
+    const prev=document.querySelector('#essay-rendered span[id="'+activeId+'"]');
+    if(prev) prev.classList.remove('active-span');
+    const prevCard=document.getElementById('card-'+activeId);
+    if(prevCard) prevCard.classList.remove('active-card');
+  }
+  activeId=id;
+  const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(span){span.classList.add('active-span');span.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  const card=document.getElementById('card-'+id);
+  if(card){card.classList.add('active-card');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+
+function renderCommentCards(){
+  const list=document.getElementById('comments-list');
+  const visible=errors.filter(e=>!cardStates[e.id]?.deleted);
+  dbg(`renderCommentCards: ${errors.length} errors, ${visible.length} visible`);
+
+  if(!visible.length){
+    list.innerHTML='<div class="right-empty">'+(errors.length?'Tất cả đã xoá':'Không có lỗi')+'</div>';
+    return;
+  }
+
+  list.innerHTML=visible.map((err,i)=>{
+    const st=cardStates[err.id]||{text:'',approved:false,editing:false};
+    const isGr=err.type==='grammar';
+    const isActive=err.id===activeId;
+    const span=document.querySelector('#essay-rendered span[id="'+err.id+'"]');
+    const spanHtml=span?span.innerHTML:'';
+
+    let cardClass='comment-card';
+    if(isActive) cardClass+=' active-card';
+    if(st.approved&&!st.editing) cardClass+=' approved-card';
+    if(st.editing) cardClass+=' editing-card';
+
+    const bodyHtml=st.editing
+      ? `<textarea class="card-textarea" id="ta-${err.id}">${esc(st.text)}</textarea>`
+      : `<div class="card-text">${renderMd(st.text)||'<span style="color:#9ca3af;font-style:italic">Không có comment</span>'}</div>`;
+
+    const actionsHtml=st.editing
+      ? `<button class="btn-cancel-c" onclick="event.stopPropagation();cancelEdit('${err.id}')">Huỷ</button>
+         <button class="btn-save-c" onclick="event.stopPropagation();saveEdit('${err.id}')">✓ Lưu & Duyệt</button>
+         <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
+      : st.approved
+        ? `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa lại</button>
+           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`
+        : `<button class="btn-edit-c" onclick="event.stopPropagation();startEdit('${err.id}')">Sửa</button>
+           <button class="btn-approve" onclick="event.stopPropagation();approveCard('${err.id}')">✓ Duyệt</button>
+           <button class="btn-del-c" onclick="event.stopPropagation();deleteCard('${err.id}')">✗</button>`;
+
+    return`<div class="${cardClass}" id="card-${err.id}" onclick="selectError('${err.id}')">
+      <div class="card-header">
+        ${st.approved&&!st.editing?'<span class="approved-icon">✓</span>':''}
+        <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GR':'LR'}</span>
+        <div class="card-correction ${isGr?'':'voc'}">${spanHtml}</div>
+        <span class="card-num">#${i+1}</span>
+      </div>
+      <div class="card-body">${bodyHtml}</div>
+      <div class="card-actions">${actionsHtml}</div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('.card-textarea').forEach(ta=>{
+    ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';
+    ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+  });
+}
+
+function approveCard(id){
+  cardStates[id].approved=true;cardStates[id].editing=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp){sp.classList.add('approved');sp.classList.remove('active-span');}
+  if(activeId===id) activeId=null;
+  updateStats();renderCommentCards();
+}
+function startEdit(id){
+  Object.keys(cardStates).forEach(k=>{if(k!==id)cardStates[k].editing=false;});
+  cardStates[id].editing=true;cardStates[id].approved=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp) sp.classList.remove('approved');
+  updateStats();renderCommentCards();selectError(id);
+  setTimeout(()=>{const ta=document.getElementById('ta-'+id);if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}},50);
+}
+function saveEdit(id){
+  const ta=document.getElementById('ta-'+id);
+  if(ta) cardStates[id].text=ta.value.trim()||cardStates[id].text;
+  cardStates[id].editing=false;
+  approveCard(id);
+}
+function cancelEdit(id){cardStates[id].editing=false;renderCommentCards();}
+function deleteCard(id){
+  cardStates[id].deleted=true;cardStates[id].editing=false;
+  const sp=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(sp){sp.classList.remove('approved','active-span');sp.classList.add('span-deleted');}
+  if(activeId===id) activeId=null;
+  updateStats();renderCommentCards();
+}
+function approveAll(){
+  errors.forEach(e=>{
+    if(!cardStates[e.id].deleted&&!cardStates[e.id].approved){
+      cardStates[e.id].approved=true;
+      const sp=document.querySelector('#essay-rendered span[id="'+e.id+'"]');
+      if(sp) sp.classList.add('approved');
+    }
+  });
+  activeId=null;updateStats();renderCommentCards();
+}
+function copyAll(){
+  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted);
+  if(!approved.length) return;
+  const parts=approved.map(e=>'['+(e.type==='grammar'?'GR':'LR')+']\n'+cardStates[e.id].text);
+  navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
+    const b=document.getElementById('btn-copy-all');
+    b.textContent='✓ Đã copy!';setTimeout(()=>b.textContent='Copy tất cả nhận xét đã duyệt',2000);
+  });
+}
+function updateStats(){
+  const total=errors.filter(e=>!cardStates[e.id]?.deleted).length;
+  const approved=errors.filter(e=>cardStates[e.id]?.approved&&!cardStates[e.id]?.deleted).length;
+  document.getElementById('stat-total').textContent=total+' lỗi';
+  document.getElementById('stat-approved').textContent=approved+' duyệt';
+  document.getElementById('btn-copy-all').disabled=approved===0;
+  document.getElementById('btn-approve-all').disabled=approved>=total;
+}
+function resetForm(){
+  errors=[];cardStates={};activeId=null;
+  document.getElementById('student-name').value='';
+  document.getElementById('week').value='';
+  document.getElementById('essay').value='';
+  document.getElementById('prompt-box').textContent='Chọn tuần để xem đề bài...';
+  document.getElementById('prompt-box').classList.add('empty');
+  document.getElementById('word-count').textContent='0 từ';
+  document.getElementById('word-count').className='word-count low';
+  document.getElementById('btn-grade').disabled=true;
+  document.getElementById('err-banner').style.display='none';
+  document.getElementById('input-section').style.display='block';
+  document.getElementById('essay-result').style.display='none';
+  document.getElementById('comments-list').innerHTML='<div class="right-empty">Nhập API key + chấm bài<br>để xem nhận xét AI</div>';
+  document.getElementById('stat-total').textContent='0 lỗi';
+  document.getElementById('stat-approved').textContent='0 duyệt';
+  document.getElementById('btn-copy-all').disabled=true;
+  document.getElementById('btn-approve-all').disabled=true;
+  dbg('Reset xong');
+}
+function renderMd(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
