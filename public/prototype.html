@@ -67,27 +67,71 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
 .legend-lr{background:#86efac;color:#14532d}
 .legend-approved{color:#16a34a;font-weight:700}
 
-/* ───── Essay rendered ───── */
-.essay-view{font-size:15px;line-height:2.1;color:#111827;white-space:pre-wrap;padding:8px 4px;font-family:Georgia,"Times New Roman",serif}
+/* ───── Essay rendered (CRM style: strikethrough + pill) ───── */
+.essay-view{font-size:16px;line-height:2.4;color:#1f2937;white-space:pre-wrap;padding:8px 4px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 
-/* Grammar = yellow */
-.essay-view span.err-grammar{background:#fef08a;border-radius:3px;padding:1px 4px;cursor:pointer;transition:all .12s;display:inline}
-.essay-view span.err-grammar:hover{background:#fde047;outline:1.5px solid #ca8a04;outline-offset:1px}
-.essay-view span.err-grammar.is-active{background:#facc15;outline:2.5px solid #2563eb;outline-offset:2px}
-.essay-view span.err-grammar > s{color:#92400e;text-decoration:line-through;text-decoration-color:#b45309;text-decoration-thickness:1.5px}
-.essay-view span.err-grammar > mark{background:transparent;color:#166534;font-weight:700}
+/* Wrong text — red strikethrough, no background */
+.essay-view span.err-grammar > s,
+.essay-view span.err-vocab > s{
+  color:#9ca3af;
+  text-decoration:line-through;
+  text-decoration-color:#dc2626;
+  text-decoration-thickness:2px;
+  background:transparent;
+  font-weight:400;
+  margin-right:2px;
+}
 
-/* Vocabulary = green */
-.essay-view span.err-vocab{background:#86efac;border-radius:3px;padding:1px 4px;cursor:pointer;transition:all .12s;display:inline}
-.essay-view span.err-vocab:hover{background:#4ade80;outline:1.5px solid #16a34a;outline-offset:1px}
-.essay-view span.err-vocab.is-active{background:#22c55e;outline:2.5px solid #2563eb;outline-offset:2px}
-.essay-view span.err-vocab > s{color:#166534;text-decoration:line-through;text-decoration-color:#15803d;text-decoration-thickness:1.5px}
-.essay-view span.err-vocab > mark{background:transparent;color:#14532d;font-weight:700}
+/* Correct text — yellow pill (grammar) */
+.essay-view span.err-grammar > mark{
+  display:inline-block;
+  background:#fde047;
+  color:#1f2937;
+  padding:1px 8px;
+  border-radius:5px;
+  font-weight:700;
+  font-size:12.5px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  vertical-align:baseline;
+  line-height:1.5;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* Correct text — green pill (vocabulary) */
+.essay-view span.err-vocab > mark{
+  display:inline-block;
+  background:#86efac;
+  color:#14532d;
+  padding:1px 8px;
+  border-radius:5px;
+  font-weight:700;
+  font-size:12.5px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  vertical-align:baseline;
+  line-height:1.5;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* Span wrapper — clickable but no background */
+.essay-view span.err-grammar,
+.essay-view span.err-vocab{
+  cursor:pointer;
+  transition:all .12s;
+  display:inline;
+  border-radius:3px;
+  padding:0 1px;
+}
+.essay-view span.err-grammar:hover{background:rgba(253,224,71,.25)}
+.essay-view span.err-vocab:hover{background:rgba(134,239,172,.3)}
+.essay-view span.err-grammar.is-active{background:rgba(253,224,71,.5);outline:2px solid #2563eb;outline-offset:2px}
+.essay-view span.err-vocab.is-active{background:rgba(134,239,172,.5);outline:2px solid #2563eb;outline-offset:2px}
 
 .essay-view s:empty,.essay-view mark:empty{display:none}
-.essay-view span.is-approved::after{content:'✓';font-size:9px;color:#15803d;vertical-align:super;margin-left:2px;font-weight:700}
-.essay-view span.is-deleted{opacity:.3;cursor:default!important;text-decoration:none}
-.essay-view span.is-deleted::before{content:'';position:absolute}
+.essay-view span.is-approved::after{content:'✓';font-size:10px;color:#15803d;vertical-align:super;margin-left:2px;font-weight:700}
+.essay-view span.is-deleted{opacity:.35;cursor:default!important}
+.essay-view span.is-deleted > mark{background:#e5e7eb!important;color:#9ca3af!important}
 
 /* ───── Right panel ───── */
 .right{background:#fafbfc;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
@@ -111,12 +155,11 @@ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:56p
 .cmt-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;flex-shrink:0}
 .cmt-badge.gr{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
 .cmt-badge.lr{background:#dcfce7;color:#166534;border:1px solid #86efac}
-.cmt-correction{font-size:13px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex:1;min-width:0;font-family:Georgia,serif}
-.cmt-correction s{color:#92400e;text-decoration:line-through;background:#fef08a;padding:1px 4px;border-radius:3px;font-size:12.5px}
-.cmt-correction.lr s{color:#166534;background:#86efac}
-.cmt-correction mark{background:transparent;color:#166534;font-weight:700;font-size:13px}
-.cmt-correction.lr mark{color:#14532d}
-.cmt-arrow{color:#9ca3af;font-weight:700;font-size:11px}
+.cmt-correction{font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.cmt-correction s{color:#9ca3af;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:1.8px;background:transparent;padding:0;font-size:13px;font-weight:400}
+.cmt-correction mark{display:inline-block;background:#fde047;color:#1f2937;padding:1px 7px;border-radius:4px;font-weight:700;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;line-height:1.5}
+.cmt-correction.lr mark{background:#86efac;color:#14532d}
+.cmt-arrow{display:none}
 .cmt-num{margin-left:auto;font-size:11px;color:#9ca3af;font-weight:600;flex-shrink:0}
 .cmt-checkmark{color:#16a34a;font-weight:700;font-size:14px;flex-shrink:0}
 
