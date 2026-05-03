@@ -486,7 +486,9 @@ function renderCommentCards(){
     const isGr=err.type==='grammar';
     const isActive=err.id===activeId;
     const span=document.querySelector('#essay-rendered span[id="'+err.id+'"]');
-    const spanHtml=span?span.innerHTML:'';
+    const wrongText=span?.querySelector('s')?.textContent||'';
+    const rightText=span?.querySelector('mark')?.textContent||'';
+    const corrHtml=(wrongText?`<s>${esc(wrongText)}</s>`:'')+' '+(rightText?`<mark>${esc(rightText)}</mark>`:'');
 
     let cardClass='comment-card';
     if(isActive) cardClass+=' active-card';
@@ -512,7 +514,7 @@ function renderCommentCards(){
       <div class="card-header">
         ${st.approved&&!st.editing?'<span class="approved-icon">✓</span>':''}
         <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GR':'LR'}</span>
-        <div class="card-correction ${isGr?'':'voc'}">${spanHtml}</div>
+        <div class="card-correction ${isGr?'':'voc'}">${corrHtml}</div>
         <span class="card-num">#${i+1}</span>
       </div>
       <div class="card-body">${bodyHtml}</div>
