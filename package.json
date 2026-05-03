@@ -1,0 +1,14 @@
+{
+  "name": "cham-bai-root",
+  "version": "1.0.0",
+  "description": "Hệ thống AI chấm bài Writing — Khóa ROOT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.53.0",
+    "express": "^4.18.2"
+  }
+}

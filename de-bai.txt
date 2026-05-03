@@ -1,0 +1,135 @@
+# ĐỀ BÀI KHÓA ROOT – IELTS YOUPASS
+# File này dùng trong Claude Project "Chấm bài ROOT"
+# Khi chấm bài, giáo viên ghi "Tuần X" để AI tham chiếu đúng đề và focus
+
+==================================================
+TUẦN 1
+==================================================
+ĐỀ BÀI:
+- harm sb/sth
+- allow sb to do sth / at an early age
+- spend time doing sth / before an exam
+- force sb to do sth / extra after-school classes
+- spend money on sth / savings / district 1
+- violent content / influence sb/sth / behaviour
+
+FOCUS TUẦN NÀY:
+S-V agreement (chia động từ đúng với chủ ngữ), verb form (dạng động từ sau động từ chính), preposition cơ bản (on/in/at/to), spelling (chính tả).
+
+==================================================
+TUẦN 2
+==================================================
+ĐỀ BÀI:
+- consider (v) / apply to sth / vì → because + S-FV
+- ask sb to do sth / homework
+- make sb + adj / office worker / burnout
+- unlike + N / decide (v) / challenging (adj)
+- provide sb with sth / job opportunity
+- discuss / future plan / before + V-ing / drop out of
+
+FOCUS TUẦN NÀY:
+Collocation (kết hợp từ tự nhiên), verb patterns (động từ đi với to-inf hay V-ing), cấu trúc "vì → because + S + FV" (không dùng "because of + N" khi có mệnh đề).
+
+==================================================
+TUẦN 3
+==================================================
+ĐỀ BÀI:
+- cancel / trip / problem / flight
+- flight / depart / prepare / visit
+- during + noun / quiet / hometown / congestion
+- job opportunities / access
+- the authorities / encourage / tourism industry / economy
+
+FOCUS TUẦN NÀY:
+Câu có bối cảnh thời gian — chú ý chọn thì động từ phù hợp với timeline (quá khứ/hiện tại/tương lai). "during + N" (không dùng "during + mệnh đề").
+
+==================================================
+TUẦN 4
+==================================================
+ĐỀ BÀI:
+- risk (n) / disease (n)
+- thường / quá nhiều
+- stressed / because + S-FV / enough
+- household chores / food delivery app
+- lifestyle / such as + V-ing
+
+FOCUS TUẦN NÀY:
+Phân biệt adj vs adv — adj bổ nghĩa cho N, adv bổ nghĩa cho V/adj/adv. Thứ tự tính từ trước danh từ. "such as + V-ing" (không dùng "such as + to-inf").
+
+==================================================
+TUẦN 5
+==================================================
+ĐỀ BÀI:
+- academic results / focus on / studies
+- thanks to / after + V-ing
+- option / work environment
+- announcement / sales department / pay rise
+- business trip / eventually
+- savings / eat out
+
+FOCUS TUẦN NÀY:
+Cụm giới từ: "due to + N/V-ing", "without + V-ing", "thanks to + N/V-ing". Liên từ chỉ nguyên nhân/tương phản: "because / since / although / even though" (không dịch thẳng từ tiếng Việt).
+
+==================================================
+TUẦN 6
+==================================================
+ĐỀ BÀI:
+- Nối câu bằng mệnh đề tính từ (adj clause) — Ex1
+- Viết câu có adj clause với các từ: platform / course / Google Translate / aim / policy — Ex2
+
+FOCUS TUẦN NÀY:
+Defining clause (mệnh đề xác định, không dùng dấu phẩy): who/which/that bổ nghĩa trực tiếp cho danh từ đứng trước. "Phẩy which" chỉ toàn bộ ý mệnh đề trước (thêm dấu phẩy trước which).
+
+==================================================
+TUẦN 7
+==================================================
+ĐỀ BÀI:
+- aware / tourist destination
+- Western country / nuclear
+- heavy industry / untreated waste
+- plastic waste / wild animal species
+- find (v) = cảm thấy (find + O + adj)
+- ozone layer / sun's radiation / greenhouse gases
+
+FOCUS TUẦN NÀY:
+Non-defining clause (mệnh đề không xác định, BẮT BUỘC có dấu phẩy): ", who/which..." bổ sung thông tin thêm, không định danh. "Phẩy which" chỉ cho cả mệnh đề trước (cả hành động/sự việc, không chỉ danh từ đơn).
+
+==================================================
+TUẦN 8
+==================================================
+ĐỀ BÀI:
+- sell / district 1 / colleague
+- cancel / trip / plan
+- consider / drugs / back then
+- dominate
+- overtime
+- punish / litter / regulation
+
+FOCUS TUẦN NÀY:
+Câu bị động: cấu trúc "be + V3", chọn thì phù hợp cho bị động (is sold / was sold / has been sold...). Sau giới từ dùng V-ing (not to-inf). Nhận biết khi nào câu cần bị động.
+
+==================================================
+TUẦN 9 (ÔN TẬP TỔNG HỢP)
+==================================================
+ĐỀ BÀI – 6 phần:
+- Phần A: Viết câu (tổng hợp)
+- Phần B: Sửa lỗi
+- Phần C: Adj / Adv
+- Phần D: Prep phrase (cụm giới từ)
+- Phần E: Adj clause (mệnh đề tính từ)
+- Phần F: Adj clause + conjunctions (mệnh đề tính từ + liên từ)
+
+FOCUS TUẦN NÀY:
+Tổng hợp toàn bộ 8 tuần. Comment chính xác theo từng phần (A/B/C/D/E/F). Ưu tiên lỗi trọng tâm của từng phần:
+- B: nhận dạng đúng tên lỗi
+- C: phân biệt adj/adv
+- D: giới từ + V-ing
+- E: who/which/that, có/không có phẩy
+- F: phẩy which + liên từ nối mệnh đề
+
+==================================================
+GHI CHÚ SỬ DỤNG
+==================================================
+- Giáo viên gõ: "Tuần [số]. Bài học sinh: [paste bài]"
+- AI sẽ tham chiếu đúng đề bài và focus của tuần đó khi chấm
+- Nếu không ghi tuần, AI chấm theo quy tắc chung

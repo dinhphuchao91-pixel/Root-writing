@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ROOT Writing Marker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8f9fa;color:#111827;min-height:100vh;font-size:15px}
+
+/* ── Header ── */
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;color:#111827;text-decoration:none;cursor:pointer}
+.logo-icon{width:30px;height:30px;background:#16a34a;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+.nav{display:flex;align-items:center;gap:8px}
+.btn-nav{background:none;border:none;color:#6b7280;font-size:.85rem;cursor:pointer;padding:6px 12px;border-radius:7px;font-family:inherit}
+.btn-nav:hover{background:#f3f4f6;color:#111827}
+.btn-primary{background:#111827;color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px}
+.btn-primary:hover{background:#1f2937}
+
+/* ── Screens ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── HOME ── */
+.home-wrap{max-width:860px;margin:0 auto;padding:32px 16px 60px}
+.home-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.home-title{font-size:1.15rem;font-weight:700}
+.home-sub{font-size:.85rem;color:#6b7280;margin-top:2px}
+.empty-state{text-align:center;padding:64px 20px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+.empty-icon{font-size:44px;margin-bottom:14px}
+.empty-state h3{font-size:1rem;font-weight:600;color:#374151;margin-bottom:6px}
+.empty-state p{font-size:.875rem;color:#9ca3af;margin-bottom:20px}
+.history-list{display:flex;flex-direction:column;gap:8px}
+.history-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s}
+.history-card:hover{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.08)}
+.h-name{font-weight:600;font-size:.9rem}
+.h-meta{font-size:.78rem;color:#9ca3af;margin-top:3px}
+.h-right{display:flex;align-items:center;gap:8px}
+.chip{padding:3px 9px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap}
+.chip-week{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.chip-err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.chip-ok{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+
+/* ── MARK SCREEN: 2-column ── */
+.mark-layout{display:grid;grid-template-columns:1fr 400px;height:calc(100vh - 54px)}
+@media(max-width:820px){.mark-layout{grid-template-columns:1fr;height:auto}}
+
+/* ── Left panel ── */
+.left-panel{padding:24px;border-right:1px solid #e5e7eb;overflow-y:auto;height:100%}
+.back-btn{display:inline-flex;align-items:center;gap:5px;color:#6b7280;font-size:.82rem;background:none;border:none;cursor:pointer;margin-bottom:18px;padding:0;font-family:inherit}
+.back-btn:hover{color:#111827}
+
+/* Input form */
+.section-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin-bottom:14px}
+.section-card h3{font-size:.88rem;font-weight:700;color:#374151;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:.78rem;font-weight:600;color:#374151}
+input[type=text],select,textarea{width:100%;padding:8px 11px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.875rem;font-family:inherit;transition:border-color .15s;background:#fff}
+input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:#16a34a}
+select{cursor:pointer}
+textarea{resize:vertical;min-height:150px;line-height:1.65}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prompt-box{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:7px;padding:10px 12px;font-size:.82rem;color:#374151;line-height:1.6;min-height:44px}
+.prompt-box.empty{color:#9ca3af;font-style:italic}
+.word-count{font-size:.75rem;text-align:right;margin-top:3px}
+.word-count.ok{color:#15803d}.word-count.low{color:#dc2626}
+.btn-grade{width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-grade:hover:not(:disabled){background:#1f2937}
+.btn-grade:disabled{opacity:.45;cursor:not-allowed}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err-banner{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 13px;border-radius:7px;font-size:.85rem;margin-top:10px}
+
+/* Essay result */
+.essay-result{display:none}
+.result-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.result-title{font-size:1rem;font-weight:700}
+.meta-chip{padding:3px 10px;border-radius:6px;font-size:.75rem;font-weight:600;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
+.meta-chip.done{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.reset-btn{font-size:.75rem;color:#6b7280;background:none;border:1px solid #e5e7eb;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
+.reset-btn:hover{background:#f3f4f6}
+
+/* Legend */
+.legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;padding:10px 14px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#6b7280}
+.ld-gr-s{background:#fee2e2;color:#dc2626;text-decoration:line-through;padding:1px 5px;border-radius:3px;font-size:.73rem}
+.ld-gr-m{background:#dcfce7;color:#15803d;padding:1px 5px;border-radius:3px;font-size:.73rem;font-weight:600}
+.ld-voc-s{background:#fef3c7;color:#b45309;text-decoration:line-through;padding:1px 5px;border-radius:3px;font-size:.73rem}
+.ld-voc-m{background:#dbeafe;color:#1d4ed8;padding:1px 5px;border-radius:3px;font-size:.73rem;font-weight:600}
+
+/* ── ESSAY RENDERED (Word-style inline corrections) ── */
+.essay-rendered{line-height:2;font-size:.92rem;color:#1f2937;white-space:pre-wrap;padding:4px 0}
+
+.essay-rendered span.grammar,
+.essay-rendered span.vocabulary{cursor:pointer;border-radius:3px;position:relative;transition:outline .1s}
+
+.essay-rendered span.grammar:hover{outline:2px solid rgba(220,38,38,.5);outline-offset:2px;border-radius:3px}
+.essay-rendered span.vocabulary:hover{outline:2px solid rgba(180,83,9,.5);outline-offset:2px;border-radius:3px}
+.essay-rendered span.active-span{outline:2.5px solid #2563eb !important;outline-offset:2px;border-radius:3px;background:rgba(37,99,235,.05)}
+
+/* Grammar: red strikethrough + green mark */
+.essay-rendered span.grammar s{color:#dc2626;background:#fee2e2;text-decoration:line-through;text-decoration-color:#dc2626;padding:1px 2px;border-radius:2px}
+.essay-rendered span.grammar mark{color:#15803d;background:#dcfce7;padding:1px 4px;border-radius:2px;font-weight:600}
+
+/* Vocabulary: amber strikethrough + blue mark */
+.essay-rendered span.vocabulary s{color:#b45309;background:#fef3c7;text-decoration:line-through;text-decoration-color:#b45309;padding:1px 2px;border-radius:2px}
+.essay-rendered span.vocabulary mark{color:#1d4ed8;background:#dbeafe;padding:1px 4px;border-radius:2px;font-weight:600}
+
+/* Empty s/mark: hidden */
+.essay-rendered s:empty,.essay-rendered mark:empty{display:none}
+
+/* Comment indicator */
+.essay-rendered span.has-comment::after{content:'●';font-size:7px;color:#15803d;vertical-align:super;margin-left:1px}
+
+/* ── Right panel ── */
+.right-panel{background:#fff;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;height:100%;overflow:hidden}
+.right-header{padding:13px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.right-title{font-size:.88rem;font-weight:700}
+.right-stats{display:flex;gap:6px}
+.stat-chip{padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:600}
+.sc-red{background:#fef2f2;color:#dc2626}
+.sc-green{background:#f0fdf4;color:#15803d}
+
+/* Active comment editor (top, fixed height) */
+.active-editor{border-bottom:1px solid #f3f4f6;flex-shrink:0;padding:14px 16px;min-height:54px;background:#fafafa}
+.ae-placeholder{color:#9ca3af;font-size:.82rem;text-align:center;padding:12px 0;display:flex;align-items:center;justify-content:center;gap:6px}
+
+.ae-error-header{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.badge-gr{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
+.badge-voc{background:#fef3c7;color:#b45309;border:1px solid #fde68a;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
+
+/* Mini correction preview in editor */
+.ae-correction{font-size:.8rem;color:#374151;padding:5px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;line-height:1.6}
+.ae-correction s{color:#dc2626;background:#fee2e2;text-decoration:line-through;padding:0 2px;border-radius:2px}
+.ae-correction mark{color:#15803d;background:#dcfce7;padding:0 3px;border-radius:2px;font-weight:600}
+.ae-correction.voc s{color:#b45309;background:#fef3c7}
+.ae-correction.voc mark{color:#1d4ed8;background:#dbeafe}
+
+.ae-textarea{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:.82rem;line-height:1.65;font-family:inherit;resize:vertical;min-height:75px;margin:8px 0;transition:border-color .15s;background:#fff}
+.ae-textarea:focus{outline:none;border-color:#2563eb}
+
+.ae-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.btn-save-c{padding:5px 14px;background:#111827;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-save-c:hover{background:#1f2937}
+.btn-clear-sel{margin-left:auto;padding:4px 10px;background:none;color:#9ca3af;border:1px solid #e5e7eb;cursor:pointer;font-size:.73rem;font-family:inherit;border-radius:5px}
+.btn-clear-sel:hover{color:#6b7280;background:#f3f4f6}
+
+/* AI button with hover tooltip */
+.ai-btn-wrap{position:relative;display:inline-flex}
+.btn-use-ai{padding:5px 12px;background:#fff;color:#2563eb;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px}
+.btn-use-ai:hover{background:#eff6ff;border-color:#93c5fd}
+.ai-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:0;min-width:240px;max-width:300px;background:#1e293b;color:#f1f5f9;padding:10px 13px;border-radius:9px;font-size:.76rem;line-height:1.6;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none}
+.ai-tooltip::after{content:'';position:absolute;top:100%;left:16px;border:6px solid transparent;border-top-color:#1e293b}
+.ai-btn-wrap:hover .ai-tooltip{display:block}
+.ai-tooltip b{color:#93c5fd}
+
+/* Comments list */
+.comments-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.list-label{font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;padding:0 2px}
+.saved-card{border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s}
+.saved-card:hover{border-color:#9ca3af;background:#fafafa}
+.saved-card.sc-active{border-color:#2563eb;background:#eff6ff}
+.sc-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.sc-body{font-size:.79rem;color:#374151;line-height:1.65;margin-bottom:8px}
+.sc-body b{color:#1d4ed8}
+.sc-acts{display:flex;gap:6px}
+.btn-sc-edit{padding:3px 10px;background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:inherit}
+.btn-sc-edit:hover{border-color:#9ca3af}
+.btn-sc-del{padding:3px 8px;background:none;color:#ef4444;border:1px solid #fecaca;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:inherit}
+.btn-sc-del:hover{background:#fef2f2}
+.empty-list{text-align:center;padding:28px 0;color:#9ca3af;font-size:.82rem;line-height:1.7}
+
+/* Footer */
+.right-footer{padding:10px 14px;border-top:1px solid #e5e7eb;flex-shrink:0}
+.btn-copy-all{width:100%;padding:9px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-copy-all:disabled{opacity:.4;cursor:not-allowed}
+.btn-copy-all:hover:not(:disabled){background:#047857}
+
+/* Right panel empty (before grading) */
+.right-empty{padding:48px 20px;text-align:center;color:#9ca3af;font-size:.85rem;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="showHome()">
+    <div class="logo-icon">✏️</div>
+    ROOT Writing Marker
+  </div>
+  <div class="nav">
+    <button class="btn-nav" onclick="showHome()">Trang chủ</button>
+    <button class="btn-primary" onclick="showMark()">+ Chấm bài mới</button>
+  </div>
+</header>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="home-wrap">
+    <div class="home-header">
+      <div>
+        <div class="home-title">Danh sách bài đã chấm</div>
+        <div class="home-sub" id="home-sub">0 bài</div>
+      </div>
+      <button class="btn-primary" onclick="showMark()">+ Chấm bài mới</button>
+    </div>
+    <div id="history-container"></div>
+  </div>
+</div>
+
+<!-- MARK -->
+<div id="screen-mark" class="screen">
+  <div class="mark-layout">
+
+    <!-- LEFT -->
+    <div class="left-panel">
+      <button class="back-btn" onclick="showHome()">← Quay lại danh sách</button>
+
+      <!-- INPUT -->
+      <div id="input-section">
+        <div class="section-card">
+          <h3>Thông tin bài chấm</h3>
+          <div class="form-2col">
+            <div class="field">
+              <label>Tên học sinh</label>
+              <input type="text" id="student-name" placeholder="Nhập tên..."/>
+            </div>
+            <div class="field">
+              <label>Tuần học</label>
+              <select id="week" onchange="updatePrompt()">
+                <option value="">-- Chọn tuần --</option>
+                <option value="1">Tuần 1 — Verb patterns & Prepositions</option>
+                <option value="2">Tuần 2 — Collocations & Verb patterns</option>
+                <option value="3">Tuần 3 — Thì động từ</option>
+                <option value="4">Tuần 4 — Adj vs Adv</option>
+                <option value="5">Tuần 5 — Prep phrase & Liên từ</option>
+                <option value="6">Tuần 6 — Adj clause (xác định)</option>
+                <option value="7">Tuần 7 — Adj clause (không xác định)</option>
+                <option value="8">Tuần 8 — Bị động</option>
+                <option value="9">Tuần 9 — Tổng hợp</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Đề bài</label>
+            <div class="prompt-box empty" id="prompt-box">Chọn tuần để xem đề bài...</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <h3>Bài làm của học sinh</h3>
+          <div class="field">
+            <textarea id="essay" placeholder="Paste bài viết vào đây..." oninput="updateWordCount()"></textarea>
+            <div class="word-count low" id="word-count">0 từ</div>
+          </div>
+          <button class="btn-grade" id="btn-grade" onclick="gradeEssay()" disabled>Chấm bài</button>
+          <div id="err-banner" class="err-banner" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="essay-result" class="essay-result">
+        <div class="result-meta">
+          <span class="result-title" id="result-name"></span>
+          <span class="meta-chip done">Đã chấm bài</span>
+          <span class="meta-chip" id="result-week-chip">Tuần ?</span>
+          <button class="reset-btn" onclick="resetForm()">↺ Chấm bài khác</button>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item"><span class="ld-gr-s">sai</span><span style="color:#9ca3af;font-size:.72rem">→</span><span class="ld-gr-m">đúng</span><span>Ngữ pháp (GR)</span></div>
+          <div class="legend-item"><span class="ld-voc-s">sai</span><span style="color:#9ca3af;font-size:.72rem">→</span><span class="ld-voc-m">đúng</span><span>Từ vựng (LR)</span></div>
+          <div class="legend-item" style="color:#15803d;font-size:.72rem">● đã có nhận xét</div>
+        </div>
+
+        <div class="essay-rendered" id="essay-rendered"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="right-header">
+        <span class="right-title">Nhận xét</span>
+        <div class="right-stats">
+          <span class="stat-chip sc-red" id="stat-total">0 lỗi</span>
+          <span class="stat-chip sc-green" id="stat-comments">0 nhận xét</span>
+        </div>
+      </div>
+
+      <!-- Active editor -->
+      <div class="active-editor" id="active-editor">
+        <div class="right-empty" style="padding:20px 0">Chấm bài để bắt đầu</div>
+      </div>
+
+      <!-- Comments list -->
+      <div class="comments-list" id="comments-list"></div>
+
+      <!-- Footer -->
+      <div class="right-footer">
+        <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const WEEK_DATA = {
+  1:'harm sb/sth | allow sb to do sth / at an early age | spend time doing sth / before an exam | force sb to do sth / extra after-school classes | spend money on sth / savings / district 1 | violent content / influence sb/sth / behaviour',
+  2:'consider (v) / apply to sth / vì → because + S-FV | ask sb to do sth / homework | make sb + adj / office worker / burnout | unlike + N / decide (v) / challenging (adj) | provide sb with sth / job opportunity | discuss / future plan / before + V-ing / drop out of',
+  3:'cancel / trip / problem / flight | flight / depart / prepare / visit | during + noun / quiet / hometown / congestion | job opportunities / access | the authorities / encourage / tourism industry / economy',
+  4:'risk (n) / disease (n) | thường / quá nhiều | stressed / because + S-FV / enough | household chores / food delivery app | lifestyle / such as + V-ing',
+  5:'academic results / focus on / studies | thanks to / after + V-ing | option / work environment | announcement / sales department / pay rise | business trip / eventually | savings / eat out',
+  6:'Nối câu bằng adj clause (Ex1) | Viết câu có adj clause: platform / course / Google Translate / aim / policy (Ex2)',
+  7:"aware / tourist destination | Western country / nuclear | heavy industry / untreated waste | plastic waste / wild animal species | find (v) = cảm thấy | ozone layer / sun's radiation / greenhouse gases",
+  8:'sell / district 1 / colleague | cancel / trip / plan | consider / drugs / back then | dominate | overtime | punish / litter / regulation',
+  9:'6 phần A-F: Viết câu | Sửa lỗi | Adj/Adv | Prep phrase | Adj clause | Adj clause + conjunctions',
+};
+
+// ── State ──
+let correctedHtml = '';
+let errors = [];           // [{id, type, ai_comment}]
+let teacherComments = {};  // {id: {text}}
+let activeSpanId = null;
+let currentSession = null;
+let essayText = '';
+
+// ── Nav ──
+function showHome(){
+  document.getElementById('screen-home').classList.add('active');
+  document.getElementById('screen-mark').classList.remove('active');
+  renderHistory();
+}
+function showMark(session){
+  document.getElementById('screen-home').classList.remove('active');
+  document.getElementById('screen-mark').classList.add('active');
+  if(!session) resetForm();
+}
+
+// ── Form ──
+function updatePrompt(){
+  const w=document.getElementById('week').value;
+  const box=document.getElementById('prompt-box');
+  if(w&&WEEK_DATA[w]){box.textContent=WEEK_DATA[w];box.classList.remove('empty');}
+  else{box.textContent='Chọn tuần để xem đề bài...';box.classList.add('empty');}
+  checkBtn();
+}
+function updateWordCount(){
+  const t=document.getElementById('essay').value.trim();
+  const n=t?t.split(/\s+/).length:0;
+  const el=document.getElementById('word-count');
+  el.textContent=n+' từ'; el.className='word-count '+(n>=10?'ok':'low');
+  checkBtn();
+}
+function checkBtn(){
+  const name=document.getElementById('student-name').value.trim();
+  const week=document.getElementById('week').value;
+  const essay=document.getElementById('essay').value.trim();
+  document.getElementById('btn-grade').disabled=!(name&&week&&essay.split(/\s+/).filter(Boolean).length>=5);
+}
+document.getElementById('student-name').addEventListener('input',checkBtn);
+
+// ── Grade ──
+async function gradeEssay(){
+  const name=document.getElementById('student-name').value.trim();
+  const week=document.getElementById('week').value;
+  essayText=document.getElementById('essay').value.trim();
+  const btn=document.getElementById('btn-grade');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang chấm...';
+  document.getElementById('err-banner').style.display='none';
+
+  try{
+    const res=await fetch('/api/grade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({week:Number(week),essay:essayText})});
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||'Lỗi server.');}
+    const data=await res.json();
+
+    correctedHtml=data.corrected_html||'';
+    errors=(data.errors||[]);
+    teacherComments={};
+    activeSpanId=null;
+
+    currentSession={id:Date.now(),name,week:Number(week),essay:essayText,correctedHtml,errors,teacherComments,errorCount:errors.length,time:new Date().toISOString()};
+    saveSession(currentSession);
+    showResults(name,week);
+  }catch(err){
+    const b=document.getElementById('err-banner');
+    b.textContent=err.message||'Không kết nối được server.';
+    b.style.display='block';
+  }
+  btn.disabled=false; btn.innerHTML='Chấm bài';
+}
+
+// ── Show results ──
+function showResults(name, week){
+  document.getElementById('input-section').style.display='none';
+  document.getElementById('essay-result').style.display='block';
+  document.getElementById('result-name').textContent=name;
+  document.getElementById('result-week-chip').textContent='Tuần '+week;
+
+  // Render corrected HTML
+  const rendered=document.getElementById('essay-rendered');
+  rendered.innerHTML=correctedHtml.replace(/\n/g,'<br>');
+
+  // Restore has-comment from saved session
+  Object.keys(teacherComments).forEach(id=>{
+    const sp=rendered.querySelector('span[id="'+id+'"]');
+    if(sp) sp.classList.add('has-comment');
+  });
+
+  setupSpanHandlers();
+  updateStats();
+  updateActiveEditor();
+  renderCommentsList();
+}
+
+// ── Span interaction ──
+function setupSpanHandlers(){
+  const rendered=document.getElementById('essay-rendered');
+  rendered.querySelectorAll('span.grammar,span.vocabulary').forEach(span=>{
+    span.addEventListener('click',()=>selectSpan(span.id));
+  });
+}
+
+function selectSpan(id){
+  // Deselect previous
+  if(activeSpanId){
+    const prev=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
+    if(prev) prev.classList.remove('active-span');
+  }
+  activeSpanId=id;
+  const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(span){ span.classList.add('active-span'); span.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+  updateActiveEditor();
+  renderCommentsList();
+}
+
+function clearSelection(){
+  if(activeSpanId){
+    const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
+    if(span) span.classList.remove('active-span');
+  }
+  activeSpanId=null;
+  updateActiveEditor();
+  renderCommentsList();
+}
+
+// ── Active editor ──
+function updateActiveEditor(){
+  const editor=document.getElementById('active-editor');
+
+  if(!activeSpanId){
+    const hasErrors=errors.length>0;
+    editor.innerHTML=hasErrors
+      ? '<div class="ae-placeholder">👆 Click vào lỗi được tô màu để thêm nhận xét</div>'
+      : '<div class="right-empty" style="padding:16px 0">Chấm bài để bắt đầu</div>';
+    return;
+  }
+
+  const error=errors.find(e=>e.id===activeSpanId)||{};
+  const existing=teacherComments[activeSpanId];
+  const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
+  const spanHtml=span?span.innerHTML:'';
+  const isGr=error.type==='grammar';
+
+  // Build tooltip HTML (AI comment preview)
+  const aiText=error.ai_comment?renderMd(error.ai_comment):'(Không có comment AI)';
+
+  editor.innerHTML=`
+    <div class="ae-error-header">
+      <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GRAMMAR':'VOCABULARY'}</span>
+      <div class="ae-correction ${isGr?'':'voc'}">${spanHtml}</div>
+    </div>
+    <textarea class="ae-textarea" id="ae-textarea" placeholder="Nhập nhận xét của bạn...">${existing?esc(existing.text):''}</textarea>
+    <div class="ae-actions">
+      <button class="btn-save-c" onclick="saveTeacherComment()">Lưu nhận xét</button>
+      <div class="ai-btn-wrap">
+        <button class="btn-use-ai" onclick="useAIComment()">✨ Dùng comment AI</button>
+        <div class="ai-tooltip">${aiText}</div>
+      </div>
+      <button class="btn-clear-sel" onclick="clearSelection()">✕</button>
+    </div>`;
+}
+
+function useAIComment(){
+  const error=errors.find(e=>e.id===activeSpanId);
+  if(!error) return;
+  const ta=document.getElementById('ae-textarea');
+  if(ta){ ta.value=error.ai_comment; ta.focus(); }
+}
+
+function saveTeacherComment(){
+  const ta=document.getElementById('ae-textarea');
+  if(!ta||!ta.value.trim()) return;
+  teacherComments[activeSpanId]={text:ta.value.trim()};
+  const span=document.querySelector('#essay-rendered span[id="'+activeSpanId+'"]');
+  if(span) span.classList.add('has-comment');
+  updateStats();
+  autosave();
+  clearSelection();
+}
+
+// ── Comments list ──
+function renderCommentsList(){
+  const list=document.getElementById('comments-list');
+  const ids=Object.keys(teacherComments);
+  if(!ids.length){
+    list.innerHTML='<div class="empty-list">Chưa có nhận xét nào<br><span style="font-size:.75rem">Click vào lỗi tô màu để thêm</span></div>';
+    return;
+  }
+  list.innerHTML='<div class="list-label">Nhận xét đã lưu ('+ids.length+')</div>'+ids.map(id=>{
+    const tc=teacherComments[id];
+    const error=errors.find(e=>e.id===id)||{};
+    const isActive=id===activeSpanId;
+    const isGr=error.type==='grammar';
+    return`<div class="saved-card ${isActive?'sc-active':''}" onclick="selectSpan('${id}')">
+      <div class="sc-top">
+        <span class="${isGr?'badge-gr':'badge-voc'}">${isGr?'GR':'LR'}</span>
+      </div>
+      <div class="sc-body">${renderMd(tc.text)}</div>
+      <div class="sc-acts">
+        <button class="btn-sc-edit" onclick="event.stopPropagation();editComment('${id}')">Sửa</button>
+        <button class="btn-sc-del" onclick="event.stopPropagation();deleteComment('${id}')">Xoá</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editComment(id){
+  // Fill textarea with existing comment and select span
+  teacherComments[id]=teacherComments[id]||{text:''};
+  selectSpan(id);
+  setTimeout(()=>{const ta=document.getElementById('ae-textarea');if(ta){ta.value=teacherComments[id].text;ta.focus();}},50);
+}
+
+function deleteComment(id){
+  delete teacherComments[id];
+  const span=document.querySelector('#essay-rendered span[id="'+id+'"]');
+  if(span) span.classList.remove('has-comment');
+  if(activeSpanId===id) clearSelection();
+  updateStats();
+  renderCommentsList();
+  autosave();
+}
+
+function updateStats(){
+  const total=errors.length;
+  const commented=Object.keys(teacherComments).length;
+  document.getElementById('stat-total').textContent=total+' lỗi';
+  document.getElementById('stat-comments').textContent=commented+' nhận xét';
+  document.getElementById('btn-copy-all').disabled=commented===0;
+}
+
+function copyAll(){
+  const parts=Object.entries(teacherComments).map(([id,tc])=>{
+    const error=errors.find(e=>e.id===id)||{};
+    return'['+( error.type==='grammar'?'GR':'LR')+']\n'+tc.text;
+  });
+  navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
+    const b=document.getElementById('btn-copy-all');
+    b.textContent='✓ Đã copy!';
+    setTimeout(()=>b.textContent='Copy tất cả nhận xét',2000);
+  });
+}
+
+// ── Reset ──
+function resetForm(){
+  correctedHtml=''; errors=[]; teacherComments={}; activeSpanId=null; essayText=''; currentSession=null;
+  document.getElementById('student-name').value='';
+  document.getElementById('week').value='';
+  document.getElementById('essay').value='';
+  document.getElementById('prompt-box').textContent='Chọn tuần để xem đề bài...';
+  document.getElementById('prompt-box').classList.add('empty');
+  document.getElementById('word-count').textContent='0 từ';
+  document.getElementById('word-count').className='word-count low';
+  document.getElementById('btn-grade').disabled=true;
+  document.getElementById('err-banner').style.display='none';
+  document.getElementById('input-section').style.display='block';
+  document.getElementById('essay-result').style.display='none';
+  document.getElementById('active-editor').innerHTML='<div class="right-empty" style="padding:16px 0">Chấm bài để bắt đầu</div>';
+  document.getElementById('comments-list').innerHTML='';
+  document.getElementById('stat-total').textContent='0 lỗi';
+  document.getElementById('stat-comments').textContent='0 nhận xét';
+  document.getElementById('btn-copy-all').disabled=true;
+}
+
+// ── localStorage ──
+function getSessions(){try{return JSON.parse(localStorage.getItem('root_sessions')||'[]');}catch{return[];}}
+function saveSession(s){const arr=getSessions();const i=arr.findIndex(x=>x.id===s.id);if(i>=0)arr[i]=s;else arr.unshift(s);localStorage.setItem('root_sessions',JSON.stringify(arr.slice(0,100)));}
+function autosave(){if(!currentSession)return;currentSession.teacherComments=teacherComments;saveSession(currentSession);}
+
+// ── History ──
+function renderHistory(){
+  const sessions=getSessions();
+  document.getElementById('home-sub').textContent=sessions.length+' bài';
+  const c=document.getElementById('history-container');
+  if(!sessions.length){
+    c.innerHTML=`<div class="empty-state"><div class="empty-icon">📝</div><h3>Chưa có bài nào được chấm</h3><p>Bấm "+ Chấm bài mới" để bắt đầu</p><button class="btn-primary" onclick="showMark()" style="margin:0 auto">+ Chấm bài mới</button></div>`;
+    return;
+  }
+  c.innerHTML='<div class="history-list">'+sessions.map(s=>{
+    const d=new Date(s.time);
+    const t=d.toLocaleDateString('vi-VN')+' '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    const commented=Object.keys(s.teacherComments||{}).length;
+    return`<div class="history-card" onclick="openSession(${s.id})">
+      <div><div class="h-name">${esc(s.name)}</div><div class="h-meta">${s.errorCount} lỗi · ${commented} nhận xét · ${t}</div></div>
+      <div class="h-right">
+        <span class="chip chip-week">Tuần ${s.week}</span>
+        <span class="chip ${s.errorCount===0?'chip-ok':'chip-err'}">${s.errorCount===0?'Không lỗi':s.errorCount+' lỗi'}</span>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function openSession(id){
+  const s=getSessions().find(x=>x.id===id);
+  if(!s) return;
+  currentSession=s;
+  correctedHtml=s.correctedHtml||'';
+  errors=s.errors||[];
+  teacherComments=s.teacherComments||{};
+  essayText=s.essay||'';
+  activeSpanId=null;
+  document.getElementById('student-name').value=s.name;
+  document.getElementById('week').value=s.week;
+  document.getElementById('essay').value=s.essay||'';
+  updatePrompt(); updateWordCount();
+  showMark(s);
+  showResults(s.name,s.week);
+}
+
+// ── Utils ──
+function renderMd(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+renderHistory();
+</script>
+</body>
+</html>
