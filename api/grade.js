@@ -145,7 +145,7 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { week, essay } = req.body || {};
+  const { week, essay, apiKey: bodyApiKey } = req.body || {};
 
   if (!week || !essay || !String(essay).trim()) {
     return res.status(400).json({ error: 'Thieu tuan hoc hoac bai viet.' });
@@ -154,9 +154,10 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Tuan phai tu 1 den 9.' });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  // Accept API key from request body (prototype mode) or env var (production)
+  const apiKey = bodyApiKey || process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Chua cai ANTHROPIC_API_KEY.' });
+    return res.status(500).json({ error: 'Chua co API key. Nhap key vao header hoac cai ANTHROPIC_API_KEY.' });
   }
 
   try {

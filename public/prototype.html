@@ -398,19 +398,11 @@ async function gradeEssay(){
   dbg('Đang gọi API...');
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    // Gọi qua /api/grade (Vercel serverless) để tránh CORS
+    const res=await fetch('/api/grade',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:8000,
-        system:buildPrompt(Number(week)),
-        messages:[{role:'user',content:`Tuan ${week}. Bai hoc sinh:\n\n${essay}`}],
-      }),
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({week:Number(week),essay,apiKey}),
     });
     const data=await res.json();
     dbg(`API status: ${res.status}, input: ${data.usage?.input_tokens}, output: ${data.usage?.output_tokens}`);
@@ -418,20 +410,11 @@ async function gradeEssay(){
     if(!res.ok){
       if(res.status===401) throw new Error('API key không hợp lệ.');
       if(res.status===429) throw new Error('Rate limit. Chờ một lúc rồi thử lại.');
-      throw new Error(data?.error?.message||'Lỗi API.');
+      throw new Error(data?.error||'Lỗi server.');
     }
 
-    const rawText=data.content?.find(b=>b.type==='text')?.text??'{}';
-    let cleaned=rawText.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/i,'').trim();
-    const jsonMatch=cleaned.match(/\{[\s\S]*\}/);
-    if(jsonMatch) cleaned=jsonMatch[0];
-
-    let parsed;
-    try{ parsed=JSON.parse(cleaned); }
-    catch(e){ throw new Error('AI không trả về JSON hợp lệ. Thử lại nhé.\n\nRaw: '+rawText.slice(0,200)); }
-
-    const correctedHtml=parsed.corrected_html||'';
-    errors=parsed.errors||[];
+    const correctedHtml=data.corrected_html||'';
+    errors=data.errors||[];
     dbg(`Parsed OK: ${errors.length} lỗi, corrected_html length: ${correctedHtml.length}`);
 
     // Init card states
