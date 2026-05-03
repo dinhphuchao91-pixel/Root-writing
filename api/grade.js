@@ -78,6 +78,21 @@ Vi du:
 - bo "money": <span id='4' class='vocabulary'><s>money </s><mark></mark></span>savings
 - them "a":   <span id='5' class='grammar'><s></s><mark>a </mark></span>high score
 
+LOI CHINH TA - DANH DAU GRANULAR (CUC KY QUAN TRONG):
+- Thieu chu cai → CHI them chu cai bi thieu (KHONG gach het tu):
+  • "interst" thieu 'e' → inter<span id='1' class='vocabulary'><s></s><mark>e</mark></span>st
+  • "oppotunities" thieu 'r' → oppo<span id='2' class='vocabulary'><s></s><mark>r</mark></span>tunities
+  • "enviroment" thieu 'n' → envi<span id='3' class='vocabulary'><s></s><mark>n</mark></span>ronment
+- Thua chu cai → CHI gach chu cai thua:
+  • "tomorrowww" → tomorrow<span id='4' class='vocabulary'><s>ww</s><mark></mark></span>
+  • "begining" thua/thieu 'n' → begin<span id='5' class='vocabulary'><s></s><mark>n</mark></span>ing
+- Sai vi tri 1-2 chu → chi sua doan sai:
+  • "recieve" → rec<span id='6' class='vocabulary'><s>ie</s><mark>ei</mark></span>ve
+  • "anothre" → ano<span id='7' class='vocabulary'><s>re</s><mark>er</mark></span> (anothre→another)
+- Sai chinh ta nhieu/khong nhan ra → MOI gach het tu va viet lai:
+  • "thrue" → <span id='8' class='vocabulary'><s>thrue</s><mark>true</mark></span>
+  • "behviour" sai 2 cho → <span id='9' class='vocabulary'><s>behviour</s><mark>behaviour</mark></span>
+
 CACH VIET AI COMMENT (giong giao vien Root):
 - Giai thich theo NGU CANH cu the cua bai - KHONG noi "theo quy tac".
 - Toi da 2-3 dong/comment. Giong than thien.
