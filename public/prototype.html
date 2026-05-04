@@ -412,6 +412,40 @@ function parseErrors(errArr,html){
   });
 }
 
+// ════ Minimal-diff helper: tách thành {prefix, middleWrong, middleRight, suffix} ════
+function minimalDiff(wrong,right){
+  if(!wrong||!right) return {prefix:'',middleWrong:wrong||'',middleRight:right||'',suffix:''};
+  let p=0;
+  while(p<wrong.length && p<right.length && wrong[p]===right[p]) p++;
+  let sfx=0;
+  while(sfx<wrong.length-p && sfx<right.length-p
+        && wrong[wrong.length-1-sfx]===right[right.length-1-sfx]) sfx++;
+  return {
+    prefix: wrong.slice(0,p),
+    middleWrong: wrong.slice(p,wrong.length-sfx),
+    middleRight: right.slice(p,right.length-sfx),
+    suffix: sfx>0?wrong.slice(wrong.length-sfx):'',
+  };
+}
+
+// Apply minimal diff to a span trong essay view
+function minimizeSpan(span){
+  const s=span.querySelector('s');
+  const m=span.querySelector('mark');
+  if(!s||!m) return;
+  const d=minimalDiff(s.textContent||'',m.textContent||'');
+  if(!d.prefix && !d.suffix) return; // không có common → giữ nguyên
+  if(!d.middleWrong && !d.middleRight) return;
+  s.textContent=d.middleWrong;
+  m.textContent=d.middleRight;
+  if(d.prefix){
+    span.parentNode.insertBefore(document.createTextNode(d.prefix),span);
+  }
+  if(d.suffix){
+    span.parentNode.insertBefore(document.createTextNode(d.suffix),span.nextSibling);
+  }
+}
+
 // ════ Show result view ════
 function showResult(correctedHtml){
   $('#input-view').style.display='none';
@@ -425,6 +459,9 @@ function showResult(correctedHtml){
     .replace(/class=['"]vocabulary['"]/g,'class="err-vocab"')
     .replace(/\n/g,'<br>');
   essayView.innerHTML=transformed;
+
+  // Post-process: minimize each span to only differing chars
+  essayView.querySelectorAll('span.err-grammar, span.err-vocab').forEach(minimizeSpan);
 
   // Click handlers
   essayView.querySelectorAll('span.err-grammar, span.err-vocab').forEach(span=>{
@@ -489,22 +526,20 @@ function buildCard(err,index){
 
   const corr=document.createElement('div');
   corr.className='cmt-correction'+(isGr?'':' lr');
-  if(err.wrong){
+  // Apply minimal diff: prefix + <s>middle</s> + <mark>middle</mark> + suffix
+  const d=minimalDiff(err.wrong||'',err.right||'');
+  if(d.prefix) corr.appendChild(document.createTextNode(d.prefix));
+  if(d.middleWrong){
     const s=document.createElement('s');
-    s.textContent=err.wrong;
+    s.textContent=d.middleWrong;
     corr.appendChild(s);
   }
-  if(err.wrong && err.right){
-    const arrow=document.createElement('span');
-    arrow.className='cmt-arrow';
-    arrow.textContent='→';
-    corr.appendChild(arrow);
-  }
-  if(err.right){
+  if(d.middleRight){
     const m=document.createElement('mark');
-    m.textContent=err.right;
+    m.textContent=d.middleRight;
     corr.appendChild(m);
   }
+  if(d.suffix) corr.appendChild(document.createTextNode(d.suffix));
   head.appendChild(corr);
 
   const num=document.createElement('span');
