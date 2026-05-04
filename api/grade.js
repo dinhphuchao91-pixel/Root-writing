@@ -226,24 +226,6 @@ VI DU COMMENT (theo cau truc 3 phan):
 ▸ Loi mach lac/Cohesion:
 "Sai mach lac -> 2 cau roi rac, thieu lien tu noi y -> them **'However'** o dau cau 2 de chi su tuong phan em nhen"
 
-═══ DANH GIA TONG QUAT (overall) ═══
-
-Sau khi tim xong loi, viet danh gia tong quat ngan gon (3-5 dong) bang tieng Viet:
-- Diem manh cua bai (neu co)
-- Loi mac chinh can chu y
-- Goi y cai thien
-
-Output trong field "overall_comment".
-
-═══ UOC TINH BAND IELTS (toi da) ═══
-
-Voi bai writing, uoc tinh diem theo 4 tieu chi (0-9):
-- task_achievement: noi dung tra loi de bai du chua
-- coherence: lien ket cau, mach lac y
-- lexical: tu vung phong phu, dung ngu canh
-- grammar: do dung ngu phap
-
-Output trong field "band_score" (object). Co the bo qua neu bai qua ngan/khong du de cham band.
 
 ═══ OUTPUT - CHI TRA VE JSON HOP LE, KHONG TEXT THUA ═══
 
@@ -252,22 +234,14 @@ Output trong field "band_score" (object). Co the bo qua neu bai qua ngan/khong d
   "errors": [
     {"id": "1", "type": "grammar", "error_name": "Sai so it/so nhieu", "ai_comment": "Sai so it/so nhieu -> ... em nhe"},
     {"id": "2", "type": "vocabulary", "error_name": "Sai chinh ta", "ai_comment": "Sai chinh ta -> ... em nhen"}
-  ],
-  "overall_comment": "Bai cua em co cau truc on, dien dat duoc y chinh. Loi chinh la chia thi va mao tu - chu y kiem tra timeline truoc khi chia dong tu em nhe. Luu y them ve cau truc 'consider + V-ing' va 'find a job' (cum dung).",
-  "band_score": {
-    "task_achievement": 6.0,
-    "coherence": 5.5,
-    "lexical": 5.5,
-    "grammar": 5.0,
-    "overall": 5.5
-  }
+  ]
 }
 
 Luu y:
 - id trong span PHAI khop voi id trong mang errors
 - error_name lay tu BO TEN LOI CHUAN o tren
 - Dung \\n trong corrected_html de xuong dong giua cac cau
-- Neu bai khong co loi: {"corrected_html": "nguyen bai", "errors": [], "overall_comment": "...", "band_score": null}`;
+- Neu bai khong co loi: {"corrected_html": "nguyen bai", "errors": []}`;
 }
 
 module.exports = async (req, res) => {
@@ -343,8 +317,6 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       corrected_html: parsed.corrected_html ?? '',
       errors: parsed.errors ?? [],
-      overall_comment: parsed.overall_comment ?? '',
-      band_score: parsed.band_score ?? null,
       usage: { input_tokens: data.usage?.input_tokens, output_tokens: data.usage?.output_tokens },
     });
   } catch (err) {
