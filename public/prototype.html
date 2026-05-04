@@ -225,8 +225,8 @@ header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 28px;height:60p
   <div class="api-bar">
     <label>API Key</label>
     <input type="password" id="api-key" placeholder="sk-ant-api03-..."/>
-    <button onclick="saveKey()">Luu</button>
-    <span class="saved" id="key-saved">Da luu</span>
+    <button onclick="saveKey()">Lưu</button>
+    <span class="saved" id="key-saved">Đã lưu</span>
   </div>
 </header>
 
@@ -238,14 +238,14 @@ header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 28px;height:60p
     <div id="input-view">
       <div class="panel">
         <div class="panel-head">
-          <h2>Bai lam cua hoc sinh</h2>
-          <button class="btn-demo" onclick="loadDemo()" title="Tai bai demo de test nhanh">Bai demo</button>
+          <h2>Bài làm của học sinh</h2>
+          <button class="btn-demo" onclick="loadDemo()" title="Tải bài demo để test nhanh">Bài demo</button>
         </div>
         <div class="field">
-          <textarea id="essay" placeholder="Paste bai viet cua hoc sinh vao day..." oninput="onEssayInput()"></textarea>
-          <div class="word-count low" id="word-count">0 tu</div>
+          <textarea id="essay" placeholder="Paste bài viết của học sinh vào đây..." oninput="onEssayInput()"></textarea>
+          <div class="word-count low" id="word-count">0 từ</div>
         </div>
-        <button class="btn-primary" id="btn-grade" onclick="gradeEssay()" disabled>Cham bai</button>
+        <button class="btn-primary" id="btn-grade" onclick="gradeEssay()" disabled>Chấm bài</button>
         <div id="error-banner" class="error-banner" style="display:none"></div>
       </div>
     </div>
@@ -253,14 +253,14 @@ header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 28px;height:60p
     <!-- RESULT VIEW -->
     <div id="result-view" class="result-view">
       <div class="result-header">
-        <span class="chip green">Da cham xong</span>
-        <button class="btn-reset" onclick="resetAll()">Cham bai khac</button>
+        <span class="chip green">Đã chấm xong</span>
+        <button class="btn-reset" onclick="resetAll()">Chấm bài khác</button>
       </div>
 
       <div class="legend">
-        <div class="legend-item"><span class="legend-chip legend-gr">GR</span> Loi ngu phap</div>
-        <div class="legend-item"><span class="legend-chip legend-lr">LR</span> Loi tu vung</div>
-        <div class="legend-item"><span class="legend-approved">✓</span> Da duyet</div>
+        <div class="legend-item"><span class="legend-chip legend-gr">GR</span> Lỗi ngữ pháp</div>
+        <div class="legend-item"><span class="legend-chip legend-lr">LR</span> Lỗi từ vựng</div>
+        <div class="legend-item"><span class="legend-approved">✓</span> Đã duyệt</div>
       </div>
       <div class="essay-view" id="essay-view"></div>
     </div>
@@ -269,20 +269,20 @@ header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 28px;height:60p
   <!-- RIGHT -->
   <div class="right">
     <div class="right-head">
-      <span class="right-title">Nhan xet chi tiet</span>
+      <span class="right-title">Nhận xét chi tiết</span>
       <div class="stat-group">
-        <span class="stat stat-red" id="stat-total">0 loi</span>
-        <span class="stat stat-green" id="stat-approved">0 nhan xet</span>
+        <span class="stat stat-red" id="stat-total">0 lỗi</span>
+        <span class="stat stat-green" id="stat-approved">0 nhận xét</span>
       </div>
     </div>
 
     <div class="cards-area" id="cards-area">
-      <div class="cards-empty">Nhap API key + bai viet<br>roi nhan "Cham bai" de xem nhan xet</div>
+      <div class="cards-empty">Nhập API key + bài viết<br>rồi nhấn "Chấm bài" để xem nhận xét</div>
     </div>
 
     <div class="right-foot">
-      <button class="btn-approve-all" id="btn-approve-all" onclick="useAiForAll()" disabled>Dung comment AI cho o trong</button>
-      <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tat ca nhan xet da duyet</button>
+      <button class="btn-approve-all" id="btn-approve-all" onclick="useAiForAll()" disabled>Dùng comment AI cho ô trống</button>
+      <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()" disabled>Copy tất cả nhận xét đã duyệt</button>
     </div>
   </div>
 
@@ -334,7 +334,7 @@ function onEssayInput(){
   const t=$('#essay').value.trim();
   const n=t?t.split(/\s+/).length:0;
   const el=$('#word-count');
-  el.textContent=n+' tu';
+  el.textContent=n+' từ';
   el.className='word-count '+(n>=10?'ok':'low');
   checkGradeBtn();
 }
@@ -350,7 +350,7 @@ async function gradeEssay(){
   const apiKey=$('#api-key').value.trim();
   const btn=$('#btn-grade');
   btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span>Dang cham...';
+  btn.innerHTML='<span class="spinner"></span>Đang chấm...';
   $('#error-banner').style.display='none';
 
   try{
@@ -361,13 +361,13 @@ async function gradeEssay(){
     });
     const data=await res.json();
     if(!res.ok){
-      if(res.status===401) throw new Error('API key khong hop le.');
-      if(res.status===429) throw new Error('Rate limit. Cho mot luc roi thu lai.');
+      if(res.status===401) throw new Error('API key không hợp lệ.');
+      if(res.status===429) throw new Error('Rate limit. Chờ một lúc rồi thử lại.');
       // If AI returned non-JSON, show debug info
-      let msg=data?.error||'Loi server.';
+      let msg=data?.error||'Lỗi server.';
       if(data?.debug){
         console.error('AI raw response:',data.debug);
-        msg+='\n\n[Debug] AI tra ve:\n'+(data.debug.rawPreview||'')+(data.debug.rawLength>500?'... ('+data.debug.rawLength+' ky tu)':'');
+        msg+='\n\n[Debug] AI trả về:\n'+(data.debug.rawPreview||'')+(data.debug.rawLength>500?'... ('+data.debug.rawLength+' ký tự)':'');
       }
       throw new Error(msg);
     }
@@ -394,7 +394,7 @@ async function gradeEssay(){
     b.style.display='block';
   }
   btn.disabled=false;
-  btn.textContent='Cham bai';
+  btn.textContent='Chấm bài';
   checkGradeBtn();
 }
 
@@ -447,7 +447,7 @@ function renderCards(){
   if(!visible.length){
     const empty=document.createElement('div');
     empty.className='cards-empty';
-    empty.textContent=errors.length?'Tat ca nhan xet da duoc xoa':'Bai nay khong co loi';
+    empty.textContent=errors.length?'Tất cả nhận xét đã được xoá':'Bài này không có lỗi 🎉';
     area.appendChild(empty);
     return;
   }
@@ -535,7 +535,7 @@ function buildCard(err,index){
     } else {
       const skip=document.createElement('span');
       skip.className='cmt-text-skipped';
-      skip.textContent='— Bo qua, khong nhan xet loi nay —';
+      skip.textContent='— Bỏ qua, không nhận xét lỗi này —';
       txt.appendChild(skip);
     }
     body.appendChild(txt);
@@ -545,7 +545,7 @@ function buildCard(err,index){
     ta.className='cmt-textarea';
     ta.id='ta-'+err.id;
     ta.value=st.text;
-    ta.placeholder='Nhap nhan xet cho hoc sinh...';
+    ta.placeholder='Nhập nhận xét cho học sinh…';
     ta.addEventListener('click',e=>e.stopPropagation());
     ta.addEventListener('input',()=>{
       cardStates[err.id].text=ta.value;
@@ -561,7 +561,7 @@ function buildCard(err,index){
 
       const aiBtn=document.createElement('button');
       aiBtn.className='btn-ai';
-      aiBtn.innerHTML='<span class="icon">AI</span> '+(st.showAi?'An goi y':'Tham khao goi y AI');
+      aiBtn.innerHTML='<span class="icon">AI</span> '+(st.showAi?'Ẩn gợi ý':'Tham khảo gợi ý AI');
       aiBtn.addEventListener('click',e=>{
         e.stopPropagation();
         cardStates[err.id].showAi=!st.showAi;
@@ -575,7 +575,7 @@ function buildCard(err,index){
 
         const lbl=document.createElement('div');
         lbl.className='ai-label';
-        lbl.textContent='GOI Y CUA AI';
+        lbl.textContent='GỢI Ý CỦA AI';
         panel.appendChild(lbl);
 
         const aiTxt=document.createElement('div');
@@ -587,7 +587,7 @@ function buildCard(err,index){
         aiAct.className='ai-actions';
         const useBtn=document.createElement('button');
         useBtn.className='btn-use-ai';
-        useBtn.textContent='Dung comment nay';
+        useBtn.textContent='Dùng comment này';
         useBtn.addEventListener('click',e=>{
           e.stopPropagation();
           cardStates[err.id].text=st.aiText;
@@ -609,11 +609,11 @@ function buildCard(err,index){
   actions.className='cmt-actions';
 
   if(st.saved){
-    actions.appendChild(makeBtn('Sua lai','btn-edit',e=>{e.stopPropagation();editAgain(err.id);}));
+    actions.appendChild(makeBtn('Sửa lại','btn-edit',e=>{e.stopPropagation();editAgain(err.id);}));
     actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
   } else {
-    actions.appendChild(makeBtn('Luu','btn-save',e=>{e.stopPropagation();saveCard(err.id);}));
-    actions.appendChild(makeBtn('Bo qua','btn-cancel',e=>{e.stopPropagation();skipCard(err.id);}));
+    actions.appendChild(makeBtn('Lưu','btn-save',e=>{e.stopPropagation();saveCard(err.id);}));
+    actions.appendChild(makeBtn('Bỏ qua','btn-cancel',e=>{e.stopPropagation();skipCard(err.id);}));
     actions.appendChild(makeBtn('✗','btn-delete',e=>{e.stopPropagation();deleteCard(err.id);}));
   }
   card.appendChild(actions);
@@ -717,7 +717,7 @@ function copyAll(){
   navigator.clipboard?.writeText(parts.join('\n\n')).then(()=>{
     const b=$('#btn-copy-all');
     const orig=b.textContent;
-    b.textContent='Da copy '+filled.length+' nhan xet';
+    b.textContent='✓ Đã copy '+filled.length+' nhận xét';
     setTimeout(()=>b.textContent=orig,2200);
   });
 }
@@ -728,8 +728,8 @@ function updateStats(){
     const st=cardStates[e.id];
     return st && !st.deleted && st.saved && st.text && st.text.trim();
   }).length;
-  $('#stat-total').textContent=total+' loi';
-  $('#stat-approved').textContent=filled+' nhan xet';
+  $('#stat-total').textContent=total+' lỗi';
+  $('#stat-approved').textContent=filled+' nhận xét';
   $('#btn-copy-all').disabled=filled===0;
   // Enable "Dung AI" if any unsaved + empty card has aiText
   const hasUnsavedEmpty=errors.some(e=>{
@@ -742,14 +742,14 @@ function updateStats(){
 function resetAll(){
   errors=[];cardStates={};activeId=null;
   $('#essay').value='';
-  $('#word-count').textContent='0 tu';
+  $('#word-count').textContent='0 từ';
   $('#word-count').className='word-count low';
   $('#error-banner').style.display='none';
   $('#input-view').style.display='block';
   $('#result-view').style.display='none';
-  $('#cards-area').innerHTML='<div class="cards-empty">Nhap API key + bai viet<br>roi nhan "Cham bai" de xem nhan xet</div>';
-  $('#stat-total').textContent='0 loi';
-  $('#stat-approved').textContent='0 nhan xet';
+  $('#cards-area').innerHTML='<div class="cards-empty">Nhập API key + bài viết<br>rồi nhấn "Chấm bài" để xem nhận xét</div>';
+  $('#stat-total').textContent='0 lỗi';
+  $('#stat-approved').textContent='0 nhận xét';
   $('#btn-copy-all').disabled=true;
   $('#btn-approve-all').disabled=true;
   checkGradeBtn();
